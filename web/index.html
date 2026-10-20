@@ -40,7 +40,40 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);fon
 button,input,textarea{font-family:inherit;font-size:12.5px;color:var(--text)}
 a{color:var(--accent);font-weight:700;text-decoration:none}
 a:hover{text-decoration:underline}
-.wrap{max-width:1320px;margin:0 auto;padding:22px 28px 60px}
+.wrap{max-width:1600px;margin:0 auto;padding:22px 28px 60px}
+.khung{display:grid;grid-template-columns:280px minmax(0,1fr);gap:14px;align-items:start}
+.chinh{min-width:0}
+/* Bảng xếp hạng */
+.lb{position:sticky;top:14px;max-height:calc(100vh - 28px);overflow-y:auto;padding:14px 12px}
+.lb .head{margin-bottom:8px}
+.lb-ky{display:flex;gap:6px;margin-bottom:8px}
+.lb-ky .btn{flex:1;padding:4px 8px;font-size:11.5px}
+.lb-r{border:1px solid var(--border);border-radius:10px;margin-bottom:6px;background:var(--surface)}
+.lb-r.nhat{border-color:#f59e0b;background:linear-gradient(0deg,var(--surface),var(--warn-bg))}
+.lb-dong{display:grid;grid-template-columns:22px 34px minmax(0,1fr) auto;gap:6px;align-items:center;width:100%;background:none;border:0;padding:6px 8px;cursor:pointer;text-align:left}
+.lb-h{font-weight:800;font-size:12px;color:var(--muted);text-align:center}
+.lb-r.nhat .lb-h{color:var(--warn)}
+.lb-av{width:34px;height:41px;image-rendering:pixelated;background:var(--bg2);border-radius:8px}
+.lb-t{min-width:0;display:flex;flex-direction:column;line-height:1.3}
+.lb-ten{font-size:12.5px}
+.lb-cd{font-size:10px;color:var(--muted)}
+.lb-cs{font-size:10.5px;color:var(--text2);font-variant-numeric:tabular-nums}
+.lb-hh{display:flex;flex-wrap:wrap;gap:3px;margin-top:2px}
+.lb-hh i{font-style:normal;font-size:9px;font-weight:700;padding:0 5px;border-radius:8px;background:var(--ok-bg);color:var(--ok)}
+.lb-d{display:flex;flex-direction:column;align-items:flex-end;line-height:1.2}
+.lb-so{font-size:16px;font-variant-numeric:tabular-nums}
+.lb-mt{font-size:10px;color:var(--muted);font-weight:700}
+.lb-mt.len{color:var(--ok)}
+.lb-mt.xuong{color:var(--bad)}
+.lb-ct{padding:2px 10px 8px;border-top:1px dashed var(--border)}
+.lb-cr{display:flex;justify-content:space-between;gap:8px;font-size:11px;padding:2px 0}
+.lb-cr span{color:var(--muted)}
+.lb-cr b{text-align:right;font-variant-numeric:tabular-nums}
+.lb-cr b.am{color:var(--bad)}
+.lb-cx{font-size:10.5px;font-weight:800;margin-top:6px;color:var(--text2)}
+.lb-xs{font-size:11px;color:var(--muted);margin:8px 2px}
+.lb-luat{width:100%;font-size:11.5px}
+@media (max-width:1100px){.khung{grid-template-columns:1fr}.lb{position:static;max-height:none;order:2}}
 .top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
 .title{font-size:20px;font-weight:800;margin-right:auto}
 .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;background:var(--bg2);color:var(--text2);font-size:11px;font-weight:700;white-space:nowrap}
@@ -180,6 +213,16 @@ body.chat-mo{padding-right:390px}
 
   <div class="note">Bản thử: chưa nối máy chủ. Chat với Mr.Mon (nút góc phải dưới) đã thử được phân việc, nhưng việc chỉ nằm trên trình duyệt của người đang xem — chưa gửi tới nhân sự, không ai sửa được app nào qua trang này. Nút "giả lập" chỉ để xem hình động, không phải số thật.</div>
 
+  <div class="khung">
+  <!-- Thanh trái: bảng xếp hạng nhân viên xuất sắc (anh Hải 20/10/2026) -->
+  <aside class="card lb" id="lb" aria-label="Bảng xếp hạng nhân viên xuất sắc">
+    <div class="head"><h2>Nhân viên xuất sắc</h2><span class="badge lb-nguon"></span></div>
+    <div class="lb-ky"></div>
+    <div class="lb-ds"></div>
+    <div class="lb-xs"></div>
+    <button class="btn lb-luat" type="button">Cách tính điểm</button>
+  </aside>
+  <main class="chinh">
   <div class="kpi-row">
     <div class="card kpi"><div class="lbl">Việc đang mở</div><div class="val">—</div><div class="sub">chưa nối dữ liệu</div></div>
     <div class="card kpi"><div class="lbl">Chờ anh quyết / duyệt</div><div class="val">—</div><div class="sub">chưa nối dữ liệu</div></div>
@@ -229,10 +272,16 @@ body.chat-mo{padding-right:390px}
     <div class="head"><h2>Bảng việc</h2><span class="badge">Việc chỉ nằm trên trang này — chưa nối máy chủ</span></div>
     <div class="board" id="board"></div>
   </div>
+  </main>
+  </div>
 
   <div class="foot"><span>Văn phòng ảo · Giám đốc Mr.Mon · Masa · Quang Lê · Katy · Tester</span><span>Mr.Mon</span></div>
 </div>
 
+<dialog class="ttin" id="lbLuat" aria-label="Cách tính điểm">
+  <div class="cp-h"><div class="cp-t">Cách tính điểm</div><button class="btn" id="lbLuatDong" type="button">Đóng</button></div>
+  <div class="tt-b"></div>
+</dialog>
 <dialog class="ttin" id="ttin" aria-label="Thông tin">
   <div class="cp-h"><div class="cp-t">Thông tin</div><button class="btn" id="ttDong" type="button">Đóng</button></div>
   <div class="tt-b">
@@ -263,7 +312,7 @@ body.chat-mo{padding-right:390px}
 </aside>
 
 <script>
-const APP_VERSION = 'v0.10 · 20/10/2026';
+const APP_VERSION = 'v0.11 · 20/10/2026';
 document.getElementById('ver').textContent = APP_VERSION;
 document.getElementById('ttVer').textContent = APP_VERSION;
 const ttin = document.getElementById('ttin');
@@ -419,8 +468,9 @@ function veHinh(c, img, x, y, mirror) {
 }
 function doCo() {
   const avail = mapwrap.clientWidth - 8;
-  zoom = Math.max(1, Math.min(4, Math.floor(avail / W)));
-  const cssW = avail < W ? avail : W * zoom, cssH = cssW * H / W, dpr = window.devicePixelRatio || 1;
+  // Co giãn theo khung (có thanh xếp hạng + khung chat thì không bị thu về cỡ nhỏ nhất); tối đa 4 lần
+  zoom = Math.min(4, avail / W);
+  const cssW = Math.floor(W * zoom), cssH = Math.floor(cssW * H / W), dpr = window.devicePixelRatio || 1;
   stage.style.width = cssW + 'px'; stage.style.height = cssH + 'px';
   cv.width = Math.round(cssW * dpr); cv.height = Math.round(cssH * dpr);
   out.imageSmoothingEnabled = false;
@@ -563,7 +613,7 @@ const pad = n => String(n).padStart(2, '0');
 const gioVN = d => d.toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', timeZone: 'Asia/Ho_Chi_Minh' });
 const mauNL = p => p == null ? '#9ca3af' : p > 50 ? '#22c55e' : p > 20 ? '#f59e0b' : '#ef4444';
 const conNgay = d => Math.max(0, Math.ceil((d - Date.now()) / 86400000));
-const soTok = n => n >= 1000 ? (n / 1000).toFixed(1).replace('.', ',') + 'k' : String(n);
+const soTok = n => n >= 1e6 ? (n / 1e6).toFixed(1).replace('.', ',') + 'M' : n >= 1000 ? (n / 1000).toFixed(1).replace('.', ',') + 'k' : String(n);
 const set = (id, v) => { document.getElementById(id).textContent = v; };
 function moPanel(a) {
   dangXem = a;
@@ -660,15 +710,20 @@ function xaoDemo() {
     a.u = { tuanDung, phienDung, tuanReset, phienReset, phan: [6, 14, 9, 7, 2][i], viecTuan: [5, 11, 23, 8, 6][i], model: a.id === 'gd' ? 'Claude Opus' : 'Claude Sonnet' };
   });
   if (dangXem) moPanel(dangXem);
+  skGiaLap();
 }
 nutDemo.onclick = () => {
   demo = !demo; nutDemo.classList.toggle('on', demo); nutDemo.setAttribute('aria-pressed', demo);
   clearInterval(demoTimer); clearInterval(buocTimer);
   if (demo) {
     NHAN_SU.forEach(a => { if (a.state !== 'sit') { a.timer = 0; } });
-    xaoDemo(); demoTimer = setInterval(xaoDemo, 12000);
+    taoLichSuGL(); xaoDemo(); demoTimer = setInterval(xaoDemo, 12000);
     buocTimer = setInterval(() => NHAN_SU.forEach(a => { if (a.tt === 'lam' && rr() < 0.5) datBuoc(a); }), 2200);
-  } else { NHAN_SU.forEach(a => { a.tt = 'off'; a.u = null; a.phien = null; }); if (dangXem) moPanel(dangXem); }
+  } else {
+    NHAN_SU.forEach(a => { a.tt = 'off'; a.u = null; a.phien = null; a._ttCu = null; });
+    for (let i = SU_KIEN.length - 1; i >= 0; i--) if (SU_KIEN[i].gl) SU_KIEN.splice(i, 1);   // bỏ số giả lập
+    if (dangXem) moPanel(dangXem); veLB();
+  }
 };
 
 khoiDong().then(() => { const q = new URLSearchParams(location.search); if (q.has('demo')) nutDemo.click(); if (q.has('chat')) moChat(true); }).catch(e => { mapwrap.innerHTML = '<div class="loi">Không tải được hình văn phòng: ' + String(e.message).replace(/[<>&]/g, '') + '</div>'; });
@@ -756,11 +811,13 @@ function phanViec(text) {
   const nham = PV.de_nham.find(r => r.tu.some(co) && !(r.loai_tru || []).some(co));
   return { xep: Object.entries(diem).sort((a, b) => b[1] - a[1]), khop, nham };
 }
-function nutGiao(v, ds) {
-  return ds.map(k => [k === 'gd' ? 'Mr.Mon tự làm' : 'Giao ' + TEN[k] + ' (' + APP[k] + ')', () => giao(v, k), false]);
+function nutGiao(v, ds, dung) {
+  return ds.map(k => [k === 'gd' ? 'Mr.Mon tự làm' : 'Giao ' + TEN[k] + ' (' + APP[k] + ')', () => giao(v, k, dung), false]);
 }
-function giao(v, k) {
+function giao(v, k, dung) {
   v.giaoCho = k; v.tt = 'moi'; veBang();
+  if (dung === true) ghiSK('gd', 'giao_dung'); else if (dung === false) ghiSK('gd', 'giao_nham');   // chấm Mr.Mon phân việc
+  veLB();
   themTin('gd', [TX(`Đã ghi việc #${v.id} cho `), B(TEN[k]), TX(` (${APP[k]}). Chưa gửi được vì trang chưa nối máy chủ — khi nối, ${TEN[k]} sẽ nhận việc ngay và báo kết quả ở đây.`)]);
 }
 function traLoi(v, text) {
@@ -771,7 +828,7 @@ function traLoi(v, text) {
     const k = xep[0][0];
     themTin('gd', [TX('Việc này thuộc '), B(APP[k]), TX(k === 'gd' ? ' — em tự làm.' : ' → em đề xuất giao '), ...(k === 'gd' ? [] : [B(TEN[k]), TX('.')]),
       TX('\nDựa vào: ' + khop[k].join(', ') + '.')],
-      [[k === 'gd' ? 'Đồng ý' : 'Giao ' + TEN[k], () => giao(v, k), true], ['Chọn người khác', () => themTin('gd', 'Anh chọn người nhận:', nutGiao(v, tat.filter(x => x !== k))), false]]);
+      [[k === 'gd' ? 'Đồng ý' : 'Giao ' + TEN[k], () => giao(v, k, true), true], ['Chọn người khác', () => themTin('gd', 'Anh chọn người nhận:', nutGiao(v, tat.filter(x => x !== k), false)), false]]);
   } else if (nham) {
     themTin('gd', nham.hoi, nutGiao(v, nham.chon));
   } else if (xep.length) {
@@ -792,6 +849,172 @@ cpIn.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey && 
 themTin('gd', [TX('Chào anh Hải. Anh nhắn việc, em xem thuộc app nào rồi đề xuất giao cho '), B('Masa'), TX(' (MKT/Sale), '), B('Quang Lê'), TX(' (QC), '),
   B('Katy'), TX(' (Kế toán) hoặc '), B('Tester'), TX('. Việc nào dễ nhầm em hỏi lại anh.\nHiện trang chưa nối máy chủ: em đề xuất được, nhưng chưa gửi việc tới nhân sự.')]);
 chuaDoc = 0; fabN.hidden = true;
+
+/* ===================== BẢNG XẾP HẠNG NHÂN VIÊN XUẤT SẮC (thanh trái, cập nhật trực tiếp) ===================== */
+// Anh Hải 20/10/2026: "thanh bên trái, avatar + chỉ số nhân sự: làm được bao nhiêu tiếng, xử lý bao nhiêu việc, đốt bao nhiêu token —
+// quy ra bộ điểm làm bảng xếp hạng nhân viên xuất sắc, real time". Bản nháp từ phiên MKT/Sale, Mr.Mon ghép + chỉnh.
+// Điểm do MÁY tính từ nhật ký sự kiện (SU_KIEN) — agent không tự cộng. KHÔNG cộng theo giờ hay token (tránh thưởng chạy lâu / tốn);
+// giờ + token chỉ hiển thị và tính điểm hiệu quả. Khi nối máy chủ: SU_KIEN = bảng vp_su_kien (chỉ thêm), token / giờ lấy từ kết quả
+// mỗi lượt chạy Claude Code (claude -p --output-format json).
+const LUAT_DIEM = {
+  xong: { d: 10, ten: 'Xong việc (× độ khó: nhỏ 1 · vừa 2 · lớn 3)' },
+  dat: { d: 5, ten: 'Anh duyệt "đạt" ngay lần đầu' },
+  tra_lai: { d: -5, ten: 'Bị anh trả lại làm lại' },
+  dung_han: { d: 3, ten: 'Xong trước hạn / trong thời gian ước tính' },
+  loi: { d: -15, ten: 'Gây lỗi (anh báo lỗi, quay lại bản cũ, app trắng)' },
+  tu_bao_loi: { d: 3, ten: 'Tự phát hiện + tự báo lỗi của mình' },
+  xin_duyet: { d: 1, ten: 'Việc rủi ro biết dừng xin duyệt' },
+  khong_xin_duyet: { d: -10, ten: 'Làm việc rủi ro không xin duyệt' },
+  bat_loi: { d: 8, ten: 'Tester: tìm ra lỗi thật (đã xác nhận)' },
+  bao_nham: { d: -2, ten: 'Tester: báo nhầm' },
+  giao_dung: { d: 2, ten: 'Mr.Mon: giao đúng người' },
+  giao_nham: { d: -3, ten: 'Mr.Mon: giao nhầm phải chuyển lại' },
+  don_doc: { d: 2, ten: 'Mr.Mon: đôn đốc việc trễ xong được' },
+  hieu_qua: { d: 5, ten: 'Hiệu quả nhất tuần (việc xong / 1 triệu token)' },
+};
+const SU_KIEN = [];   // { ai, loai, t, kho?, tok?, giay?, gl? } — gl = giả lập
+function ghiSK(ai, loai, x) { SU_KIEN.push(Object.assign({ ai, loai, t: Date.now() }, x || {})); }
+const VN = 7 * 3600000;
+function dauNgayVN(ms) { const d = new Date(ms + VN); d.setUTCHours(0, 0, 0, 0); return d.getTime() - VN; }
+function dauTuanVN(ms) { const d = new Date(dauNgayVN(ms) + VN); const thu = (d.getUTCDay() + 6) % 7; return d.getTime() - thu * 86400000 - VN; }
+function dauThangVN(ms) { const d = new Date(ms + VN); return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1) - VN; }
+let lbKy = 'tuan', lbMo = null;
+function thongKe(ai, tu, den) {
+  const r = { diem: 0, xong: 0, traLai: 0, loi: 0, tok: 0, giay: 0, chiTiet: {} };
+  SU_KIEN.forEach(s => {
+    if (s.ai !== ai || s.t < tu || s.t >= (den || Infinity)) return;
+    const d = (LUAT_DIEM[s.loai] || { d: 0 }).d * (s.loai === 'xong' ? (s.kho || 1) : 1);
+    r.diem += d; r.chiTiet[s.loai] = (r.chiTiet[s.loai] || 0) + d;
+    if (s.loai === 'xong') { r.xong++; r.tok += s.tok || 0; r.giay += s.giay || 0; }
+    if (s.loai === 'tra_lai') r.traLai++;
+    if (s.loai === 'loi') r.loi++;
+  });
+  return r;
+}
+function bangDiem(tu, den) {
+  const ds = NHAN_SU.map(a => Object.assign({ a }, thongKe(a.id, tu, den)));
+  // điểm hiệu quả: ai có việc xong / 1 triệu token cao nhất (cần ≥ 3 việc xong) được +5
+  const hq = ds.filter(x => x.xong >= 3 && x.tok > 0).sort((p, q) => q.xong / q.tok - p.xong / p.tok)[0];
+  if (hq) { hq.diem += LUAT_DIEM.hieu_qua.d; hq.chiTiet.hieu_qua = LUAT_DIEM.hieu_qua.d; hq.hq = true; }
+  return ds.sort((p, q) => q.diem - p.diem || q.xong - p.xong);
+}
+function huyHieu(a, tuan, bangTuan) {
+  const h = [], now = Date.now();
+  if (SU_KIEN.some(s => s.ai === a.id && s.loai === 'xong') && !SU_KIEN.some(s => s.ai === a.id && s.loai === 'loi' && s.t > now - 7 * 86400000)) h.push('7 ngày không lỗi');
+  if (tuan.hq) h.push('Tiết kiệm token');
+  if (tuan.xong) {
+    const tb = x => x.xong ? x.giay / x.xong : Infinity;
+    if (tb(tuan) === Math.min(...bangTuan.map(tb))) h.push('Nhanh nhất tuần');
+  }
+  if (a.id === 'test' && (tuan.chiTiet.bat_loi || 0) >= 16) h.push('Bắt lỗi giỏi');
+  return h;
+}
+const soGio = s => { const h = s / 3600; return h >= 1 ? h.toFixed(1).replace('.', ',') + ' giờ' : Math.round(s / 60) + ' phút'; };
+const lb = document.getElementById('lb');
+function veAvatar(cv, a) {
+  const img = chars[a.id]; if (!img || cv.dataset.ve) return;
+  const x = cv.getContext('2d'); x.imageSmoothingEnabled = false; x.clearRect(0, 0, cv.width, cv.height);
+  x.drawImage(img, 16, 0, 16, 24, 4, 2, 32, 48); cv.dataset.ve = 1;   // khung đứng yên, nhìn thẳng (đầu + thân)
+}
+function veLB() {
+  const now = Date.now(), tu = lbKy === 'tuan' ? dauTuanVN(now) : dauThangVN(now);
+  const ds = bangDiem(tu), homQua = bangDiem(tu, dauNgayVN(now)), bangTuan = lbKy === 'tuan' ? ds : bangDiem(dauTuanVN(now));
+  const hangCu = {}; homQua.forEach((x, i) => { hangCu[x.a.id] = i; });
+  const coGL = SU_KIEN.some(s => s.gl), coSK = SU_KIEN.length > 0;
+  const tuanTruoc = bangDiem(dauTuanVN(now) - 7 * 86400000, dauTuanVN(now)).filter(x => x.diem > 0)[0];
+  const k = (kk, t) => `<button class="btn${lbKy === kk ? ' on' : ''}" type="button" data-ky="${kk}">${t}</button>`;
+  lb.querySelector('.lb-ky').innerHTML = k('tuan', 'Tuần này') + k('thang', 'Tháng này');
+  const ng = lb.querySelector('.lb-nguon');
+  ng.textContent = coGL ? 'Số giả lập' : coSK ? 'Trên trình duyệt này' : 'Chưa nối dữ liệu';
+  ng.className = 'badge lb-nguon' + (coGL || !coSK ? ' warn' : '');
+  const dsEl = lb.querySelector('.lb-ds');
+  ds.forEach((x, i) => {
+    const a = x.a; let r = dsEl.querySelector(`[data-ai="${a.id}"]`);
+    if (!r) {   // giữ phần tử cũ để avatar không vẽ lại liên tục
+      r = el('div', 'lb-r'); r.dataset.ai = a.id;
+      r.innerHTML = `<button class="lb-dong" type="button"><span class="lb-h"></span><canvas class="lb-av" width="40" height="48"></canvas>
+        <span class="lb-t"><b class="lb-ten"></b><span class="lb-cd"></span><span class="lb-cs"></span><span class="lb-hh"></span></span>
+        <span class="lb-d"><b class="lb-so"></b><span class="lb-mt"></span></span></button><div class="lb-ct" hidden></div>`;
+      r.querySelector('.lb-dong').onclick = () => { lbMo = lbMo === a.id ? null : a.id; veLB(); };
+    }
+    dsEl.appendChild(r);   // sắp lại theo điểm
+    veAvatar(r.querySelector('.lb-av'), a);
+    const dl = a.phien && a.tt === 'lam' ? a.phien.token : 0;   // token của việc đang chạy
+    r.querySelector('.lb-h').textContent = coSK ? '#' + (i + 1) : '—';
+    r.classList.toggle('nhat', i === 0 && x.diem > 0);
+    r.querySelector('.lb-ten').textContent = a.ten;
+    r.querySelector('.lb-cd').textContent = a.cd;
+    r.querySelector('.lb-cs').textContent = coSK ? `${soGio(x.giay)} · ${x.xong} việc · ${soTok(x.tok + dl)} tok` : 'giờ · việc · token: —';
+    r.querySelector('.lb-hh').innerHTML = huyHieu(a, bangTuan.find(y => y.a === a), bangTuan).map(t => `<i>${esc(t)}</i>`).join('');
+    r.querySelector('.lb-so').textContent = coSK ? x.diem.toLocaleString('vi-VN') : '—';
+    const cu = hangCu[a.id], mt = r.querySelector('.lb-mt');
+    if (cu == null || !coSK || cu === i) { mt.textContent = coSK ? 'điểm' : ''; mt.className = 'lb-mt'; }
+    else { mt.textContent = (cu > i ? '▲' : '▼') + Math.abs(cu - i); mt.className = 'lb-mt ' + (cu > i ? 'len' : 'xuong'); }
+    const ct = r.querySelector('.lb-ct'); ct.hidden = lbMo !== a.id;
+    if (lbMo === a.id) {
+      const dn = thongKe(a.id, dauNgayVN(now));
+      const hq = x.tok ? (x.xong / (x.tok / 1e6)).toFixed(1).replace('.', ',') : '—';
+      const dong = (t, v) => `<div class="lb-cr"><span>${t}</span><b>${v}</b></div>`, ky = lbKy === 'tuan' ? 'tuần' : 'tháng';
+      ct.innerHTML = dong('Giờ làm (' + ky + ')', soGio(x.giay))
+        + dong('Việc xong / bị trả lại / gây lỗi', x.xong + ' / ' + x.traLai + ' / ' + x.loi)
+        + dong('Đang làm · chờ anh', (a.tt === 'lam' ? 1 : 0) + ' · ' + (a.tt === 'cho' ? 1 : 0))
+        + dong('Token hôm nay', soTok(dn.tok + dl)) + dong('Token ' + ky, soTok(x.tok + dl))
+        + dong('Hiệu quả (việc / 1 triệu token)', hq)
+        + '<div class="lb-cx">Điểm từ đâu</div>'
+        + (Object.keys(x.chiTiet).length ? Object.entries(x.chiTiet).sort((p, q) => q[1] - p[1]).map(([l, d]) =>
+            `<div class="lb-cr"><span>${esc(LUAT_DIEM[l].ten)}</span><b class="${d < 0 ? 'am' : ''}">${d > 0 ? '+' : ''}${d}</b></div>`).join('')
+          : '<div class="lb-cr"><span>Chưa có điểm trong kỳ</span><b>0</b></div>');
+    }
+  });
+  lb.querySelector('.lb-xs').innerHTML = tuanTruoc ? 'Nhân viên xuất sắc tuần trước: <b>' + esc(tuanTruoc.a.ten) + '</b> · ' + tuanTruoc.diem + ' điểm'
+    : 'Nhân viên xuất sắc tuần trước: chưa có';
+}
+lb.querySelector('.lb-ky').onclick = e => { const b = e.target.closest('[data-ky]'); if (b) { lbKy = b.dataset.ky; veLB(); } };
+lb.querySelector('.lb-luat').onclick = () => {
+  const d = document.getElementById('lbLuat');
+  d.querySelector('.tt-b').innerHTML = Object.values(LUAT_DIEM).map(l => `<div class="tt-r"><span>${esc(l.ten)}</span><b>${l.d > 0 ? '+' : ''}${l.d}</b></div>`).join('')
+    + '<div class="tt-r"><span>Giờ làm, token</span><b>Không cộng điểm — chỉ hiển thị + tính hiệu quả</b></div>'
+    + '<div class="tt-r"><span>Bảng tuần đặt lại</span><b>00:00 thứ Hai (giờ VN)</b></div>'
+    + '<div class="tt-r"><span>Ai chấm</span><b>Máy tính từ nhật ký sự kiện; Mr.Mon chấm độ khó, anh bấm đạt / trả lại</b></div>';
+  d.showModal();
+};
+document.getElementById('lbLuatDong').onclick = () => document.getElementById('lbLuat').close();
+veLB(); setInterval(veLB, 2000);
+
+// ---- Giả lập (nút "giả lập đang làm việc"): lịch sử 2 tuần + sự kiện mới theo thời gian. KHÔNG phải số thật ----
+function taoLichSuGL() {
+  if (SU_KIEN.some(s => s.gl)) return;
+  const now = Date.now(), nhip = { gd: 3, mkt: 5, qc: 6, kt: 4, test: 3 };   // việc / ngày
+  for (let ngay = 13; ngay >= 0; ngay--) {
+    NHAN_SU.forEach(a => {
+      const n = Math.round(nhip[a.id] * (0.5 + rr()));
+      for (let j = 0; j < n; j++) {
+        const t = dauNgayVN(now) - ngay * 86400000 + (8 + rr() * 10) * 3600000; if (t > now) continue;
+        const sk = (loai, x) => SU_KIEN.push(Object.assign({ ai: a.id, loai, t, gl: 1 }, x || {}));
+        if (a.id === 'gd') { sk(rr() < 0.88 ? 'giao_dung' : 'giao_nham'); if (rr() < 0.25) sk('don_doc'); continue; }
+        sk('xong', { kho: [1, 1, 2, 2, 3][rr() * 5 | 0], tok: 20000 + (rr() * 180000 | 0), giay: 300 + (rr() * 2400 | 0) });
+        const k = rr(); if (k < 0.62) sk('dat'); else if (k < 0.8) sk('tra_lai');
+        if (rr() < 0.5) sk('dung_han'); if (rr() < 0.15) sk('xin_duyet'); if (rr() < 0.05) sk('loi'); if (rr() < 0.06) sk('tu_bao_loi');
+        if (a.id === 'test') { if (rr() < 0.55) sk('bat_loi'); if (rr() < 0.12) sk('bao_nham'); }
+      }
+    });
+  }
+  SU_KIEN.sort((p, q) => p.t - q.t);
+}
+function skGiaLap() {   // gọi mỗi lượt giả lập (12 giây)
+  if (!demo) return;
+  NHAN_SU.forEach(a => {
+    if (a.tt === 'xong' && a._ttCu !== 'xong' && a.phien && a.id !== 'gd') {
+      ghiSK(a.id, 'xong', { kho: [1, 2, 2, 3][rr() * 4 | 0], tok: a.phien.token, giay: Math.round((Date.now() - a.phien.batDau) / 1000), gl: 1 });
+      ghiSK(a.id, rr() < 0.7 ? 'dat' : 'tra_lai', { gl: 1 });
+      if (a.id === 'test' && rr() < 0.6) ghiSK('test', 'bat_loi', { gl: 1 });
+    }
+    if (a.tt === 'cho' && a._ttCu !== 'cho' && rr() < 0.5) ghiSK(a.id, 'xin_duyet', { gl: 1 });
+    a._ttCu = a.tt;
+  });
+  if (rr() < 0.5) ghiSK('gd', 'giao_dung', { gl: 1 });
+  veLB();
+}
 
 // Nền sáng / tối (chỉ lưu lựa chọn trên máy người xem)
 const root = document.documentElement;
