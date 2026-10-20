@@ -49,7 +49,11 @@
   sang phiên MKT, phiên đó chuyển lại). Điểm do MÁY tính từ nhật ký sự kiện (sau này bảng `vp_su_kien`, chỉ thêm); KHÔNG cộng theo giờ / token.
   Bảng tuần đặt lại 00:00 thứ Hai giờ VN. Luật điểm xem nút "Cách tính điểm" trên web (đã gửi anh qua phiên MKT).
 
+- **ƯU TIÊN SỐ 1: KHÔNG dùng API tốn tiền thật, chỉ dùng tính năng trong gói** (anh nhắc lại 20/10/2026).
+
 ## 4. NHẬT KÝ
+- **20/10/2026** — Usage thật: `scripts/bao-cao-usage.js` đọc nhật ký phiên Claude Code trên máy anh (`~/.claude/projects/**/*.jsonl`) → mỗi nhân sự: token (vào / ra / ghi cache / đọc cache), giờ làm (khoảng nghỉ > 5 phút không tính), số phiên, model, đang làm hay không, lần HẾT LƯỢT gần nhất + giờ mở lại. Không gọi API, không đọc nội dung chat, chạy 1,7 giây. Thanh trạng thái (statusline — có sẵn % phiên 5h / tuần) KHÔNG chạy trong khung chat VS Code (đã thử, đã gỡ cài đặt thử). % hạn mức liên tục chưa có nguồn chính thức trong VS Code → hỏi anh. Đã nhắn phiên MKT đăng ký tiền tố `vp_` trước khi tạo bảng.
+- **20/10/2026** — Tạo tài khoản đăng nhập web cho anh (`anhhai`, mật khẩu ngẫu nhiên 20 ký tự) → chép vào clipboard anh + lưu `vp-keys.local.txt` (đã kiểm git bỏ qua) kèm bản băm SHA-256 có muối để đặt lên máy chủ. Chưa dùng được tới khi có màn đăng nhập máy chủ.
 - **20/10/2026** — Web v0.11: thanh trái bảng xếp hạng (ghép bản nháp của phiên MKT/Sale, phiên đó KHÔNG sửa repo này): hạng, avatar cắt từ hình nhân vật, giờ · việc · token hiện thẳng trên dòng, điểm, ▲▼ so đầu ngày, huy hiệu (7 ngày không lỗi / Tiết kiệm token / Nhanh nhất tuần / Bắt lỗi giỏi), tab Tuần / Tháng, bấm dòng xem "điểm từ đâu", hộp "Cách tính điểm", nhân viên xuất sắc tuần trước. Chat: anh giao đúng người Mr.Mon đề xuất → Mr.Mon +2, chọn người khác → −3 (chỉ trong trình duyệt). Giả lập tạo lịch sử 2 tuần + sự kiện mới; tắt giả lập thì xoá số giả lập. Bản đồ chuyển sang co giãn liên tục (có thanh trái + khung chat vẫn đủ to). Chưa có số thật: chưa nối máy chủ / nguồn token.
 - **20/10/2026** — Web v0.10: ẩn dòng ghi nguồn / giấy phép dưới bản đồ, chuyển vào nút "Thông tin" trên thanh đầu trang (file LICENSE MIT vẫn kèm trong trang như giấy phép yêu cầu).
 - **20/10/2026** — Web v0.9: chức danh TRÊN tên nhân vật, dạng "Agent …" (Agent Giám Đốc, Agent MKT/Sale, Agent QC CSKH, Agent Kế toán, Agent Kiểm Thử — đúng chữ anh đưa) theo lời anh.
