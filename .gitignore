@@ -1,0 +1,6 @@
+# khoá / mật khẩu / dữ liệu máy — KHÔNG BAO GIỜ đẩy lên
+*.local.*
+*.local
+.env
+.env.*
+node_modules/
