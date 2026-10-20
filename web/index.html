@@ -13,40 +13,41 @@
 <!--
   Văn phòng ảo — Giám đốc Mr.Mon điều phối 3 nhân sự (MKT/Sale, QC CSKH, Kế toán) + Tester.
   BẢO MẬT: trang này KHÔNG chứa khoá / token / mật khẩu nào. Mọi khoá chỉ nằm ở phía máy chạy agent (GitHub Secrets).
-  Bản 20/10/2026: chỉ là giao diện, CHƯA nối dữ liệu, CHƯA nhận lệnh. Mr.Mon.
+  HÌNH: nhân vật, đồ đạc, sàn, tường lấy từ Pixel Agents (MIT, © 2026 Pablo De Lucca — github.com/pixel-agents-hq/pixel-agents;
+  nhân vật dựa trên bộ Metro City của JIK-A-4). Giấy phép: assets/pa/LICENSE-pixel-agents.txt. Sơ đồ office-layout.json
+  dùng đúng định dạng layout của Pixel Agents. Phần logic (chỗ ngồi, đi lại, trạng thái, giao việc) là của văn phòng ảo.
+  Bản 20/10/2026: CHƯA nối dữ liệu, CHƯA nhận lệnh. Mr.Mon.
 -->
 <style>
 :root{
   --bg:#f5f6f8;--surface:#fff;--bg2:#f1f3f6;--border:#e3e6eb;--text:#111827;--text2:#374151;--muted:#6b7280;
-  --accent:#4f46e5;--accent-fg:#fff;--floor:#eef0f4;--wall:#cfd4dc;--desk:#e7e1d6;
+  --accent:#4f46e5;--accent-fg:#fff;
   --ok:#15803d;--ok-bg:#dcfce7;--warn:#b45309;--warn-bg:#fef3c7;--bad:#be123c;--bad-bg:#ffe4e6;--grey:#4b5563;--grey-bg:#e5e7eb;
-  --c-tp:#4f46e5;--c-test:#db2777;--c-mkt:#2563eb;--c-qc:#12b76a;--c-kt:#d97706;
   --font:'Montserrat',system-ui,-apple-system,'Segoe UI',sans-serif;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#0f1115;--surface:#171a21;--bg2:#1e222b;--border:#2b303b;--text:#e5e7eb;--text2:#cbd5e1;--muted:#8b93a3;
-  --accent:#818cf8;--accent-fg:#0b1220;--floor:#141821;--wall:#323846;--desk:#3a352c;
+  --accent:#818cf8;--accent-fg:#0b1220;
   --ok:#4ade80;--ok-bg:#12301f;--warn:#fbbf24;--warn-bg:#352812;--bad:#fb7185;--bad-bg:#3a1520;--grey:#cbd5e1;--grey-bg:#2b303b;
-  --c-tp:#818cf8;--c-test:#f472b6;--c-mkt:#60a5fa;--c-qc:#4ade80;--c-kt:#fbbf24;
 }}
 :root[data-theme="dark"]{
   --bg:#0f1115;--surface:#171a21;--bg2:#1e222b;--border:#2b303b;--text:#e5e7eb;--text2:#cbd5e1;--muted:#8b93a3;
-  --accent:#818cf8;--accent-fg:#0b1220;--floor:#141821;--wall:#323846;--desk:#3a352c;
+  --accent:#818cf8;--accent-fg:#0b1220;
   --ok:#4ade80;--ok-bg:#12301f;--warn:#fbbf24;--warn-bg:#352812;--bad:#fb7185;--bad-bg:#3a1520;--grey:#cbd5e1;--grey-bg:#2b303b;
-  --c-tp:#818cf8;--c-test:#f472b6;--c-mkt:#60a5fa;--c-qc:#4ade80;--c-kt:#fbbf24;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:13px;line-height:1.5}
 button,input,textarea{font-family:inherit;font-size:12.5px;color:var(--text)}
 a{color:var(--accent);font-weight:700;text-decoration:none}
 a:hover{text-decoration:underline}
-.wrap{max-width:1280px;margin:0 auto;padding:22px 28px 60px}
+.wrap{max-width:1320px;margin:0 auto;padding:22px 28px 60px}
 .top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
 .title{font-size:20px;font-weight:800;margin-right:auto}
 .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;background:var(--bg2);color:var(--text2);font-size:11px;font-weight:700;white-space:nowrap}
 .badge.warn{background:var(--warn-bg);color:var(--warn)}
 .btn{padding:6px 12px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);color:var(--text2);font-weight:700;cursor:pointer;white-space:nowrap}
 .btn:hover{border-color:var(--accent)}
+.btn.on{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
 .btn:disabled{opacity:.5;cursor:not-allowed}
 .note{background:var(--warn-bg);color:var(--warn);border-radius:10px;padding:10px 14px;font-weight:600;margin-bottom:14px}
 .kpi-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:14px}
@@ -54,27 +55,32 @@ a:hover{text-decoration:underline}
 .kpi .lbl{color:var(--muted);font-weight:700;font-size:11.5px}
 .kpi .val{font-size:24px;font-weight:800;text-align:right;font-variant-numeric:tabular-nums}
 .kpi .sub{color:var(--muted);font-size:11px;text-align:right}
-h2{font-size:14px;font-weight:800;margin:0 0 10px}
+h2{font-size:14px;font-weight:800;margin:0}
+.head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.head h2{margin-right:auto}
 
-/* Sơ đồ văn phòng (2D) */
-.floor{background-color:var(--floor);background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
-  background-size:28px 28px;border:3px solid var(--wall);border-radius:14px;padding:16px;display:grid;gap:16px}
-.rooms{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-.room{background:var(--surface);border:2px solid var(--wall);border-radius:10px;padding:12px 14px;display:flex;gap:12px;align-items:center;position:relative}
-.room.boss{max-width:520px;width:100%;justify-self:center}
-.room::before{content:"";position:absolute;left:50%;bottom:-2px;width:46px;height:2px;background:var(--floor);transform:translateX(-50%)}
-.avatar{flex:0 0 64px;height:64px}
-.who{min-width:0;flex:1}
-.who .name{font-weight:800;font-size:13.5px}
-.who .role{color:var(--muted);font-size:11.5px;margin-bottom:6px}
-.chip{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:700;background:var(--grey-bg);color:var(--grey)}
-.chip.ok{background:var(--ok-bg);color:var(--ok)}
-.met{margin-top:6px}
-.met .lbl{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);font-weight:600}
-.met .lbl b{font-variant-numeric:tabular-nums}
-.met .bar{height:6px;background:var(--bg2);border-radius:4px;overflow:hidden}
-.met .bar i{display:block;height:100%;width:0;background:var(--ok)}
-.room .links{margin-top:6px;font-size:11.5px}
+/* Văn phòng pixel */
+.mapwrap{background:#1b1d2a;border-radius:10px;padding:10px 0;display:flex;justify-content:center;overflow:hidden}
+.stage{position:relative;user-select:none}
+.stage canvas{display:block;width:100%;height:100%;image-rendering:pixelated}
+.tag{position:absolute;transform:translate(-50%,-100%);display:flex;align-items:center;gap:5px;background:rgba(22,24,34,.88);color:#fff;
+  border:0;border-radius:10px;padding:2px 8px;font-size:10.5px;font-weight:700;white-space:nowrap;cursor:pointer;z-index:2}
+.tag:hover,.tag.on{background:#111827;outline:2px solid #fff}
+.tag i{width:7px;height:7px;border-radius:50%;background:#9ca3af;display:inline-block}
+.panel{position:absolute;top:8px;right:8px;width:260px;max-width:calc(100% - 16px);background:var(--surface);color:var(--text);
+  border:1px solid var(--border);border-radius:12px;padding:12px 14px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:3}
+.panel[hidden]{display:none}
+.panel .pn{font-weight:800;font-size:14px;padding-right:44px}
+.panel .pr{color:var(--muted);font-size:11.5px;margin-bottom:8px}
+.panel .x{position:absolute;top:8px;right:8px;padding:2px 8px;font-size:11px}
+.panel .row{display:flex;justify-content:space-between;gap:8px;font-size:12px;padding:3px 0;border-top:1px solid var(--border)}
+.panel .row b{text-align:right}
+.chip{display:inline-block;padding:1px 8px;border-radius:20px;font-size:10.5px;font-weight:700;background:var(--grey-bg);color:var(--grey)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;color:var(--muted);font-size:11px;font-weight:600}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.credit{margin-top:6px;color:var(--muted);font-size:10.5px}
+.loi{color:#fca5a5;padding:30px;font-weight:600}
 
 /* Bảng việc + chat */
 .grid2{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:14px;margin-top:14px}
@@ -88,8 +94,9 @@ h2{font-size:14px;font-weight:800;margin:0 0 10px}
 .chat textarea{width:100%;min-height:70px;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);resize:vertical}
 .foot{margin-top:22px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 
-@media (max-width:900px){.rooms,.board,.kpi-row{grid-template-columns:repeat(2,minmax(0,1fr))}.grid2{grid-template-columns:1fr}}
-@media (max-width:600px){.wrap{padding:16px}.rooms,.board,.kpi-row{grid-template-columns:1fr}}
+@media (max-width:900px){.board,.kpi-row{grid-template-columns:repeat(2,minmax(0,1fr))}.grid2{grid-template-columns:1fr}}
+@media (max-width:600px){.wrap{padding:16px}.board,.kpi-row{grid-template-columns:1fr}.tag{font-size:9px;padding:1px 5px;gap:3px}
+  .panel{top:auto;bottom:8px}}
 </style>
 </head>
 <body>
@@ -101,23 +108,51 @@ h2{font-size:14px;font-weight:800;margin:0 0 10px}
     <button class="btn" id="theme" type="button">Đổi nền sáng / tối</button>
   </div>
 
-  <div class="note">Trang này mới là khung giao diện: chưa đăng nhập, chưa nhận lệnh, chưa đọc dữ liệu thật. Ô chat và bảng việc sẽ mở sau khi
-    có đăng nhập (chỉ anh) và kế hoạch chạy thử được duyệt.</div>
+  <div class="note">Trang này mới là khung giao diện: chưa đăng nhập, chưa nhận lệnh, chưa đọc dữ liệu thật.
+    Ô chat và bảng việc sẽ mở sau khi có đăng nhập (chỉ anh) và kế hoạch chạy thử được duyệt.</div>
 
   <div class="kpi-row">
     <div class="card kpi"><div class="lbl">Việc đang mở</div><div class="val">—</div><div class="sub">chưa nối dữ liệu</div></div>
     <div class="card kpi"><div class="lbl">Chờ anh quyết / duyệt</div><div class="val">—</div><div class="sub">chưa nối dữ liệu</div></div>
-    <div class="card kpi"><div class="lbl">Chi phí agent hôm nay</div><div class="val">—</div><div class="sub">chưa đo usage</div></div>
+    <div class="card kpi"><div class="lbl">Hạn mức gói Claude đã dùng</div><div class="val">—</div><div class="sub">chưa đo</div></div>
   </div>
 
   <div class="card">
-    <h2>Sơ đồ văn phòng</h2>
-    <div class="floor" id="floor"></div>
+    <div class="head">
+      <h2>Văn phòng</h2>
+      <button class="btn" id="demo" type="button" aria-pressed="false">Xem thử: giả lập đang làm việc</button>
+    </div>
+    <div class="mapwrap" id="mapwrap">
+      <div class="stage" id="stage">
+        <canvas id="map"></canvas>
+        <div class="panel" id="panel" hidden>
+          <button class="btn x" id="pClose" type="button">Đóng</button>
+          <div class="pn" id="pName"></div>
+          <div class="pr" id="pRole"></div>
+          <div class="row"><span>Trạng thái</span><b><span class="chip" id="pStat"></span></b></div>
+          <div class="row"><span>Việc đang làm</span><b id="pJob">—</b></div>
+          <div class="row"><span>Model Claude</span><b>chưa gắn</b></div>
+          <div class="row"><span>Độ mệt (hạn mức gói)</span><b>—</b></div>
+          <div class="row" id="pLinkRow"><span>App</span><b><a id="pLink" target="_blank" rel="noopener noreferrer">Mở app</a></b></div>
+        </div>
+      </div>
+    </div>
+    <div class="legend">
+      <span><i style="background:#9ca3af"></i>Chưa kết nối</span>
+      <span><i style="background:#f59e0b"></i>Đang làm</span>
+      <span><i style="background:#ef4444"></i>Chờ anh</span>
+      <span><i style="background:#22c55e"></i>Xong việc</span>
+      <span>Bấm vào tên nhân vật để xem chi tiết</span>
+    </div>
+    <div class="credit">Hình nhân vật, đồ đạc, sàn, tường: <a href="https://github.com/pixel-agents-hq/pixel-agents" target="_blank" rel="noopener noreferrer">Pixel Agents</a>
+      (giấy phép <a href="assets/pa/LICENSE-pixel-agents.txt" target="_blank">MIT</a>, © 2026 Pablo De Lucca), nhân vật dựa trên bộ
+      <a href="https://jik-a-4.itch.io/metrocity-free-topdown-character-pack" target="_blank" rel="noopener noreferrer">Metro City của JIK-A-4</a>.
+      Logic giao việc, chỗ ngồi, trạng thái: Văn phòng ảo.</div>
   </div>
 
   <div class="grid2">
     <div class="card">
-      <h2>Bảng việc</h2>
+      <div class="head"><h2>Bảng việc</h2></div>
       <div class="board" id="board"></div>
     </div>
     <div class="card chat">
@@ -132,40 +167,311 @@ h2{font-size:14px;font-weight:800;margin:0 0 10px}
 </div>
 
 <script>
-const APP_VERSION = 'v0.2 · 20/10/2026';
+const APP_VERSION = 'v0.4 · 20/10/2026';
 document.getElementById('ver').textContent = APP_VERSION;
 
-// Nhân sự: chỉ thông tin công khai (tên phòng + link trang live đã công khai). Không khoá, không dữ liệu nội bộ.
+/* ===================== Danh mục đồ đạc (theo manifest của Pixel Agents) ===================== */
+const T = 16, A = 'assets/pa/';
+// w,h: cỡ hình · fw,fh: số ô chiếm · bg: số hàng trên cùng đi xuyên được · cat: desks / chairs · or: hướng ghế
+// surf: đặt trên mặt bàn · wall: treo tường
+const CAT = {
+  DESK_FRONT: { w: 48, h: 32, fw: 3, fh: 2, bg: 1, cat: 'desks' },
+  TABLE_FRONT: { w: 48, h: 64, fw: 3, fh: 4, bg: 1, cat: 'desks' },
+  SMALL_TABLE_FRONT: { w: 32, h: 32, fw: 2, fh: 2, bg: 1, cat: 'desks' },
+  COFFEE_TABLE: { w: 32, h: 32, fw: 2, fh: 2, bg: 0, cat: 'desks' },
+  PC_BACK: { w: 16, h: 32, fw: 1, fh: 2, bg: 1, surf: 1 },
+  PC_SIDE: { w: 16, h: 32, fw: 1, fh: 2, bg: 1, surf: 1 },
+  COFFEE: { w: 16, h: 16, fw: 1, fh: 1, bg: 0, surf: 1 },
+  WOODEN_CHAIR_SIDE: { w: 16, h: 32, fw: 1, fh: 2, bg: 1, cat: 'chairs', or: 'side' },
+  CUSHIONED_CHAIR_FRONT: { w: 16, h: 16, fw: 1, fh: 1, bg: 0, cat: 'chairs', or: 'front' },
+  SOFA_FRONT: { w: 32, h: 16, fw: 2, fh: 1, bg: 0, cat: 'chairs', or: 'front' },
+  SOFA_BACK: { w: 32, h: 16, fw: 2, fh: 1, bg: 0, cat: 'chairs', or: 'back' },
+  SOFA_SIDE: { w: 16, h: 32, fw: 1, fh: 2, bg: 0, cat: 'chairs', or: 'side' },
+  WHITEBOARD: { w: 32, h: 32, fw: 2, fh: 2, wall: 1 },
+  DOUBLE_BOOKSHELF: { w: 32, h: 32, fw: 2, fh: 2, wall: 1 },
+  CLOCK: { w: 16, h: 32, fw: 1, fh: 2, wall: 1 },
+  LARGE_PAINTING: { w: 32, h: 32, fw: 2, fh: 2, wall: 1 },
+  HANGING_PLANT: { w: 16, h: 32, fw: 1, fh: 2, wall: 1 },
+  LARGE_PLANT: { w: 32, h: 48, fw: 2, fh: 3, bg: 2 },
+  PLANT: { w: 16, h: 32, fw: 1, fh: 2, bg: 1 },
+  PLANT_2: { w: 16, h: 32, fw: 1, fh: 2, bg: 1 },
+  BIN: { w: 16, h: 16, fw: 1, fh: 1, bg: 0 },
+};
+
+/* ===================== Nhân sự (chỉ thông tin công khai) ===================== */
 const NHAN_SU = [
-  { id: 'gd', ten: 'Mr.Mon — Giám đốc', vai: 'Nhận việc của anh, chia cho nhân sự, soát kết quả', mau: '--c-tp', boss: true },
-  { id: 'mkt', ten: 'Nhân sự MKT / Sale', vai: 'Báo cáo Marketing & Sale', mau: '--c-mkt', link: 'https://hh-vibecode.github.io/mkt-sale-app/' },
-  { id: 'qc', ten: 'Nhân sự QC CSKH', vai: 'Chất lượng chăm sóc khách', mau: '--c-qc', link: 'https://hh-vibecode.github.io/qc-cskh/' },
-  { id: 'kt', ten: 'Nhân sự Kế toán', vai: 'Tài chính – Kế toán', mau: '--c-kt', link: 'https://hh-vibecode.github.io/ke-toan/' },
-  { id: 'test', ten: 'Tester', vai: 'Kiểm thử cả 3 app, báo lỗi về đúng nhân sự', mau: '--c-test', boss: true },
+  { id: 'gd', ten: 'Mr.Mon', vai: 'Giám đốc — nhận việc của anh, chia việc, soát kết quả', char: 0, seat: [9, 3], di: [[8, 2, 'up'], [3, 12, 'left']] },
+  { id: 'mkt', ten: 'MKT / Sale', vai: 'Báo cáo Marketing & Sale', char: 5, seat: [7, 8], link: 'https://hh-vibecode.github.io/mkt-sale-app/' },
+  { id: 'qc', ten: 'QC CSKH', vai: 'Chất lượng chăm sóc khách', char: 2, seat: [11, 8], link: 'https://hh-vibecode.github.io/qc-cskh/' },
+  { id: 'kt', ten: 'Kế toán', vai: 'Tài chính – Kế toán', char: 1, seat: [7, 10], link: 'https://hh-vibecode.github.io/ke-toan/' },
+  { id: 'test', ten: 'Tester', vai: 'Kiểm thử cả 3 app, báo lỗi về đúng nhân sự', char: 3, seat: [11, 10] },
 ];
+const TT = { off: ['Chưa kết nối', '#9ca3af'], lam: ['Đang làm', '#f59e0b'], cho: ['Chờ anh', '#ef4444'], xong: ['Xong việc', '#22c55e'] };
+
+/* ===================== Tải hình ===================== */
+const loadImg = src => new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => no(new Error(src)); i.src = src; });
+const loadJson = src => fetch(src).then(r => { if (!r.ok) throw new Error(src); return r.json(); });
+
+// Tô màu theo cách của Pixel Agents: độ sáng điểm ảnh -> HSL(h, s, độ sáng đã chỉnh tương phản / sáng)
+function hsl(h, s, l) {
+  const c = (1 - Math.abs(2 * l - 1)) * s, hp = h / 60, x = c * (1 - Math.abs((hp % 2) - 1));
+  const [r, g, b] = hp < 1 ? [c, x, 0] : hp < 2 ? [x, c, 0] : hp < 3 ? [0, c, x] : hp < 4 ? [0, x, c] : hp < 5 ? [x, 0, c] : [c, 0, x];
+  const m = l - c / 2, f = v => Math.max(0, Math.min(255, Math.round((v + m) * 255)));
+  return [f(r), f(g), f(b)];
+}
+function toMau(img, col) {
+  const c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
+  const x = c.getContext('2d'); x.drawImage(img, 0, 0);
+  if (!col) return c;
+  try {
+    const d = x.getImageData(0, 0, c.width, c.height), p = d.data;
+    for (let i = 0; i < p.length; i += 4) {
+      if (!p[i + 3]) continue;
+      let l = (0.299 * p[i] + 0.587 * p[i + 1] + 0.114 * p[i + 2]) / 255;
+      if (col.c) l = 0.5 + (l - 0.5) * (100 + col.c) / 100;
+      if (col.b) l += col.b / 200;
+      [p[i], p[i + 1], p[i + 2]] = hsl(col.h, col.s / 100, Math.max(0, Math.min(1, l)));
+    }
+    x.putImageData(d, 0, 0);
+  } catch (e) { /* mở bằng file:// thì trình duyệt chặn đọc điểm ảnh — giữ màu gốc */ }
+  return c;
+}
+function bubbleCanvas(j) {
+  const c = document.createElement('canvas'); c.width = j.width; c.height = j.height;
+  const x = c.getContext('2d');
+  j.pixels.forEach((row, y) => row.forEach((k, xx) => { const col = j.palette[k]; if (col) { x.fillStyle = col; x.fillRect(xx, y, 1, 1); } }));
+  return c;
+}
+
+/* ===================== Dựng văn phòng ===================== */
+const cv = document.getElementById('map'), out = cv.getContext('2d');
+const stage = document.getElementById('stage'), mapwrap = document.getElementById('mapwrap');
+let L, W, H, scene, sx, staticLayer, items = [], blocked, seats = {}, chars = {}, bubbles = {}, zoom = 1;
+
+async function khoiDong() {
+  L = await loadJson('office-layout.json');
+  W = L.cols * T; H = L.rows * T;
+  const types = [...new Set(L.furniture.map(f => f.type.split(':')[0]))];
+  const [furnImgs, charImgs, floorImgs, wallImg, bw, bp] = await Promise.all([
+    Promise.all(types.map(t => loadImg(A + 'furniture/' + t + '.png'))),
+    Promise.all(NHAN_SU.map(n => loadImg(A + 'characters/char_' + n.char + '.png'))),
+    Promise.all([...new Set(L.tiles.filter(v => v > 0 && v < 255))].map(v => loadImg(A + 'floors/floor_' + (v - 1) + '.png').then(i => [v, i]))),
+    loadImg(A + 'walls/wall_0.png'),
+    loadJson(A + 'bubble-waiting.json'), loadJson(A + 'bubble-permission.json'),
+  ]);
+  const IMG = Object.fromEntries(types.map((t, i) => [t, furnImgs[i]]));
+  NHAN_SU.forEach((n, i) => { chars[n.id] = charImgs[i]; });
+  bubbles = { xong: bubbleCanvas(bw), cho: bubbleCanvas(bp) };
+
+  // Lưới ô
+  const tile = (c, r) => (c < 0 || r < 0 || c >= L.cols || r >= L.rows) ? 255 : L.tiles[r * L.cols + c];
+  blocked = Array.from({ length: L.rows }, (_, r) => Array.from({ length: L.cols }, (_, c) => { const v = tile(c, r); return v === 0 || v === 255; }));
+
+  // Lớp tĩnh: sàn + tường + đồ treo tường
+  staticLayer = document.createElement('canvas'); staticLayer.width = W; staticLayer.height = H;
+  const s = staticLayer.getContext('2d');
+  const floorCache = {}, FLOOR = Object.fromEntries(floorImgs);
+  for (let r = 0; r < L.rows; r++) for (let c = 0; c < L.cols; c++) {
+    const v = tile(c, r); if (v === 0 || v === 255) continue;
+    const col = L.tileColors[r * L.cols + c], k = v + JSON.stringify(col);
+    floorCache[k] = floorCache[k] || toMau(FLOOR[v], col);
+    s.drawImage(floorCache[k], c * T, r * T);
+  }
+  const wallCol = L.tileColors[L.tiles.indexOf(0)];
+  const wallSheet = toMau(wallImg, wallCol);
+  for (let r = 0; r < L.rows; r++) for (let c = 0; c < L.cols; c++) {
+    if (tile(c, r) !== 0) continue;
+    const mask = (tile(c, r - 1) === 0 ? 1 : 0) | (tile(c + 1, r) === 0 ? 2 : 0) | (tile(c, r + 1) === 0 ? 4 : 0) | (tile(c - 1, r) === 0 ? 8 : 0);
+    s.drawImage(wallSheet, (mask % 4) * 16, Math.floor(mask / 4) * 32, 16, 32, c * T, r * T - 16, 16, 32);
+  }
+
+  // Đồ đạc: thứ tự vẽ theo zY (cách của Pixel Agents)
+  const deskZ = {};
+  for (const f of L.furniture) {
+    const e = CAT[f.type.split(':')[0]]; if (!e || e.cat !== 'desks') continue;
+    for (let dr = 0; dr < e.fh; dr++) for (let dc = 0; dc < e.fw; dc++) deskZ[(f.col + dc) + ',' + (f.row + dr)] = Math.max(deskZ[(f.col + dc) + ',' + (f.row + dr)] || 0, f.row * T + e.h);
+  }
+  for (const f of L.furniture) {
+    const [type, huong] = f.type.split(':'), e = CAT[type]; if (!e) continue;
+    const x = f.col * T, y = f.row * T, mirror = huong === 'left';
+    if (e.wall) { veHinh(s, IMG[type], x, y, mirror); continue; }
+    let zY = y + e.h;
+    if (e.cat === 'chairs') zY = e.or === 'back' ? (f.row + e.fh) * T + 1 : (f.row + 1) * T;
+    if (e.surf) for (let dr = 0; dr < e.fh; dr++) for (let dc = 0; dc < e.fw; dc++) { const d = deskZ[(f.col + dc) + ',' + (f.row + dr)]; if (d && d + 0.5 > zY) zY = d + 0.5; }
+    items.push({ img: IMG[type], x, y, zY, mirror });
+    if (e.surf) continue;
+    for (let dr = e.bg || 0; dr < e.fh; dr++) for (let dc = 0; dc < e.fw; dc++) {
+      const c = f.col + dc, r = f.row + dr;
+      if (blocked[r]) blocked[r][c] = true;
+      if (e.cat === 'chairs') seats[c + ',' + r] = e.or === 'front' ? 'down' : e.or === 'back' ? 'up' : mirror ? 'left' : 'right';
+    }
+  }
+
+  scene = document.createElement('canvas'); scene.width = W; scene.height = H; sx = scene.getContext('2d');
+  sx.imageSmoothingEnabled = false;
+  taoNhanVat(); doCo(); new ResizeObserver(doCo).observe(mapwrap);
+  requestAnimationFrame(khung);
+}
+function veHinh(c, img, x, y, mirror) {
+  if (!mirror) { c.drawImage(img, x, y); return; }
+  c.save(); c.translate(x + img.width, y); c.scale(-1, 1); c.drawImage(img, 0, 0); c.restore();
+}
+function doCo() {
+  const avail = mapwrap.clientWidth - 8;
+  zoom = Math.max(1, Math.min(4, Math.floor(avail / W)));
+  const cssW = avail < W ? avail : W * zoom, cssH = cssW * H / W, dpr = window.devicePixelRatio || 1;
+  stage.style.width = cssW + 'px'; stage.style.height = cssH + 'px';
+  cv.width = Math.round(cssW * dpr); cv.height = Math.round(cssH * dpr);
+  out.imageSmoothingEnabled = false;
+}
+
+/* ===================== Logic nhân vật (của văn phòng ảo) ===================== */
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let demo = false;
+const rr = Math.random;
+const center = (c, r) => [c * T + 8, r * T + 8];
+function timDuong(from, to) {
+  const key = (c, r) => c + ',' + r, [tc, tr] = to, prev = { [key(...from)]: null }, q = [from];
+  while (q.length) {
+    const [c, r] = q.shift();
+    if (c === tc && r === tr) break;
+    for (const [dc, dr] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const n = [c + dc, r + dr], k = key(...n);
+      if (k in prev || !blocked[n[1]] || n[0] < 0 || n[0] >= L.cols) continue;
+      if (blocked[n[1]][n[0]] && !(n[0] === tc && n[1] === tr)) continue;
+      prev[k] = [c, r]; q.push(n);
+    }
+  }
+  if (!(key(tc, tr) in prev)) return [];
+  const p = []; for (let n = to; n; n = prev[key(...n)]) p.unshift(n); return p.slice(1);
+}
+function choNghi() { // chỗ đi nghỉ: sofa + chỗ đứng của từng người
+  return Object.entries(seats).map(([k, dir]) => { const [c, r] = k.split(',').map(Number); return [c, r, dir, true]; })
+    .filter(([c, r]) => !NHAN_SU.some(n => n.seat[0] === c && n.seat[1] === r));
+}
+function taoNhanVat() {
+  NHAN_SU.forEach((a, i) => {
+    a.tile = a.seat.slice(); [a.x, a.y] = center(...a.seat); a.dir = seats[a.seat.join(',')] || 'down';
+    a.state = 'sit'; a.ngoi = true; a.path = []; a.anim = rr(); a.timer = 6 + i * 4 + rr() * 10; a.tt = 'off';
+    a.di = a.di || [[3, 12, 'left'], [8, 2, 'up']];
+  });
+}
+const SPEED = 48;
+function capNhat(dt) {
+  for (const a of NHAN_SU) {
+    a.anim += dt;
+    if (a.state === 'walk') {
+      const [tx, ty] = center(...a.path[0]), dx = tx - a.x, dy = ty - a.y, d = Math.hypot(dx, dy), s = SPEED * dt;
+      if (d <= s) {
+        a.x = tx; a.y = ty; a.tile = a.path.shift();
+        if (!a.path.length) {
+          const vePho = a.tile[0] === a.seat[0] && a.tile[1] === a.seat[1];
+          a.state = vePho ? 'sit' : 'stay'; a.dir = a.goalDir; a.ngoi = a.goalSit;
+          a.timer = vePho ? 15 + rr() * 25 : 5 + rr() * 8;
+        }
+      } else {
+        a.x += dx / d * s; a.y += dy / d * s;
+        a.dir = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up');
+      }
+      continue;
+    }
+    if (reduce || (demo && a.state === 'sit')) continue;            // giả lập: ngồi làm việc tại chỗ
+    if ((a.timer -= dt) > 0) continue;
+    let goal, gDir, gSit;
+    if (a.state === 'sit') {
+      const opts = [...a.di.map(([c, r, d]) => [c, r, d, false]), ...choNghi()];
+      [goal, gDir, gSit] = (([c, r, d, s]) => [[c, r], d, s])(opts[rr() * opts.length | 0]);
+      if (NHAN_SU.some(o => o !== a && o.tile[0] === goal[0] && o.tile[1] === goal[1])) { a.timer = 3; continue; }
+    } else { goal = a.seat; gDir = seats[a.seat.join(',')] || 'down'; gSit = true; }
+    const p = timDuong(a.tile, goal);
+    if (!p.length) { a.timer = 4; continue; }
+    a.path = p; a.state = 'walk'; a.ngoi = false; a.goalDir = gDir; a.goalSit = gSit;
+  }
+}
+function khungNV(a) {
+  if (a.state === 'walk') return [0, 1, 2, 1][Math.floor(a.anim / 0.15) % 4];
+  if (a.state === 'sit' && (a.tt === 'lam' || a.tt === 'cho')) return (a.id === 'gd' ? 5 : 3) + Math.floor(a.anim / 0.3) % 2;
+  return 1;
+}
+
+/* ===================== Vẽ mỗi khung ===================== */
+let last = 0;
+function khung(t) {
+  const dt = Math.min(0.05, (t - last) / 1000 || 0); last = t;
+  capNhat(dt);
+  sx.fillStyle = '#1b1d2a'; sx.fillRect(0, 0, W, H);
+  sx.drawImage(staticLayer, 0, 0);
+  const ds = items.map(it => ({ z: it.zY, ve: () => veHinh(sx, it.img, it.x, it.y, it.mirror) }));
+  for (const a of NHAN_SU) {
+    // Ngồi quay xuống sau bàn (Mr.Mon): hạ thêm để mặt bàn che chân
+    const off = a.ngoi ? (a.dir === 'down' && a.state === 'sit' ? 10 : 6) : 0, dx = Math.round(a.x - 8), dy = Math.round(a.y + off - 32);
+    const row = a.dir === 'down' ? 0 : a.dir === 'up' ? 1 : 2, f = khungNV(a);
+    ds.push({ z: a.y + 8.5, ve: () => {
+      if (a.dir === 'left') { sx.save(); sx.translate(dx + 16, dy); sx.scale(-1, 1); sx.drawImage(chars[a.id], f * 16, row * 32, 16, 32, 0, 0, 16, 32); sx.restore(); }
+      else sx.drawImage(chars[a.id], f * 16, row * 32, 16, 32, dx, dy, 16, 32);
+    } });
+    a.dTop = dy;
+  }
+  ds.sort((p, q) => p.z - q.z).forEach(d => d.ve());
+  for (const a of NHAN_SU) { // bong bóng trên đầu
+    const b = bubbles[a.tt]; if (!b || a.state !== 'sit') continue;
+    sx.drawImage(b, Math.round(a.x - b.width / 2), a.dTop - b.height + 6);
+  }
+  out.drawImage(scene, 0, 0, cv.width, cv.height);
+  for (const a of NHAN_SU) {
+    a.tag.style.left = (a.x / W * 100) + '%';
+    a.tag.style.top = ((a.dTop + (bubbles[a.tt] && a.state === 'sit' ? -8 : 4)) / H * 100) + '%';
+    a.dot.style.background = TT[a.tt][1];
+  }
+  requestAnimationFrame(khung);
+}
+
+/* ===================== Thẻ tên + bảng thông tin ===================== */
+const panel = document.getElementById('panel');
+let dangXem = null;
+NHAN_SU.forEach(a => {
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'tag';
+  a.dot = document.createElement('i'); b.append(a.dot, document.createTextNode(a.ten));
+  b.setAttribute('aria-label', a.ten + ' — xem chi tiết'); b.onclick = () => moPanel(a);
+  stage.appendChild(b); a.tag = b;
+});
+function moPanel(a) {
+  dangXem = a;
+  NHAN_SU.forEach(m => m.tag.classList.toggle('on', m === a));
+  document.getElementById('pName').textContent = a.ten;
+  document.getElementById('pRole').textContent = a.vai;
+  document.getElementById('pStat').textContent = TT[a.tt][0] + (demo ? ' (giả lập)' : '');
+  document.getElementById('pJob').textContent = '—';
+  const lr = document.getElementById('pLinkRow'); lr.hidden = !a.link; if (a.link) document.getElementById('pLink').href = a.link;
+  panel.hidden = false;
+}
+document.getElementById('pClose').onclick = () => { panel.hidden = true; dangXem = null; NHAN_SU.forEach(m => m.tag.classList.remove('on')); };
+
+// Giả lập để xem hình động khi nối dữ liệu thật: KHÔNG phải dữ liệu thật
+const nutDemo = document.getElementById('demo');
+let demoTimer = null;
+function xaoDemo() {
+  const pool = ['lam', 'lam', 'lam', 'cho', 'xong'];
+  NHAN_SU.forEach(a => { a.tt = a.id === 'gd' ? 'lam' : pool[rr() * pool.length | 0]; });
+  if (dangXem) moPanel(dangXem);
+}
+nutDemo.onclick = () => {
+  demo = !demo; nutDemo.classList.toggle('on', demo); nutDemo.setAttribute('aria-pressed', demo);
+  clearInterval(demoTimer);
+  if (demo) {
+    NHAN_SU.forEach(a => { if (a.state !== 'sit') { a.timer = 0; } });
+    xaoDemo(); demoTimer = setInterval(xaoDemo, 6000);
+  } else { NHAN_SU.forEach(a => { a.tt = 'off'; }); if (dangXem) moPanel(dangXem); }
+};
+
+khoiDong().then(() => { if (new URLSearchParams(location.search).has('demo')) nutDemo.click(); }).catch(e => { mapwrap.innerHTML = '<div class="loi">Không tải được hình văn phòng: ' + String(e.message).replace(/[<>&]/g, '') + '</div>'; });
+
+/* ===================== Bảng việc ===================== */
 const TRANG_THAI = [
   ['moi', 'Mới'], ['cho_xac_nhan', 'Chờ anh xác nhận giao'], ['dang_lam', 'Đang làm'],
   ['cho_anh', 'Chờ anh trả lời'], ['cho_duyet', 'Chờ anh duyệt'], ['xong', 'Xong'],
 ];
-
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const avatar = mau => `<svg class="avatar" viewBox="0 0 64 64" aria-hidden="true">
-  <rect x="6" y="44" width="52" height="14" rx="3" fill="var(--desk)"/>
-  <circle cx="32" cy="20" r="10" fill="var(${mau})"/>
-  <path d="M14 46c0-10 8-16 18-16s18 6 18 16z" fill="var(${mau})" opacity=".85"/>
-  <rect x="24" y="40" width="16" height="9" rx="1.5" fill="var(--wall)"/></svg>`;
-const phong = n => `<div class="room${n.boss ? ' boss' : ''}">
-  ${avatar(n.mau)}
-  <div class="who">
-    <div class="name">${esc(n.ten)}</div>
-    <div class="role">${esc(n.vai)}</div>
-    <span class="chip">Chưa kết nối</span>
-    <div class="met"><div class="lbl"><span>Độ mệt (usage)</span><b>—</b></div><div class="bar"><i></i></div></div>
-    ${n.link ? `<div class="links"><a href="${esc(n.link)}" target="_blank" rel="noopener noreferrer">Mở app</a></div>` : ''}
-  </div></div>`;
-
-const floor = document.getElementById('floor');
-floor.innerHTML = phong(NHAN_SU[0]) + `<div class="rooms">${NHAN_SU.slice(1, 4).map(phong).join('')}</div>` + phong(NHAN_SU[4]);
 document.getElementById('board').innerHTML = TRANG_THAI.map(([, ten]) =>
   `<div class="col"><h3>${esc(ten)}<span>0</span></h3><div class="empty">Trống</div></div>`).join('');
 
