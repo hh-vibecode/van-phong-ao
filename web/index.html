@@ -67,6 +67,9 @@ h2{font-size:14px;font-weight:800;margin:0}
   border:0;border-radius:10px;padding:2px 8px;font-size:10.5px;font-weight:700;white-space:nowrap;cursor:pointer;z-index:2}
 .tag:hover,.tag.on{background:#111827;outline:2px solid #fff}
 .tag i{width:7px;height:7px;border-radius:50%;background:#9ca3af;display:inline-block}
+.tag{flex-direction:column;gap:0;line-height:1.25;padding:2px 8px 3px}
+.tag .cd{font-size:8.5px;font-weight:600;color:#c7d2fe;letter-spacing:.2px}
+.tag .dong{display:flex;align-items:center;gap:5px}
 .panel{position:absolute;top:8px;right:8px;width:260px;max-width:calc(100% - 16px);background:var(--surface);color:var(--text);
   border:1px solid var(--border);border-radius:12px;padding:12px 14px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:3}
 .panel[hidden]{display:none}
@@ -245,7 +248,7 @@ body.chat-mo{padding-right:390px}
 </aside>
 
 <script>
-const APP_VERSION = 'v0.6 · 20/10/2026';
+const APP_VERSION = 'v0.7 · 20/10/2026';
 document.getElementById('ver').textContent = APP_VERSION;
 
 /* ===================== Danh mục đồ đạc (theo manifest của Pixel Agents) ===================== */
@@ -278,11 +281,11 @@ const CAT = {
 
 /* ===================== Nhân sự (chỉ thông tin công khai) ===================== */
 const NHAN_SU = [
-  { id: 'gd', ten: 'Mr.Mon', vai: 'Giám đốc — nhận việc của anh, chia việc, soát kết quả', char: 0, seat: [9, 3], di: [[8, 2, 'up'], [3, 12, 'left']] },
-  { id: 'mkt', ten: 'Masa', vai: 'Nhân sự MKT / Sale — báo cáo Marketing & Sale', char: 5, seat: [7, 8], link: 'https://hh-vibecode.github.io/mkt-sale-app/' },
-  { id: 'qc', ten: 'Quang Lê', vai: 'Nhân sự QC CSKH — chất lượng chăm sóc khách', char: 2, seat: [11, 8], link: 'https://hh-vibecode.github.io/qc-cskh/' },
-  { id: 'kt', ten: 'Katy', vai: 'Nhân sự Kế toán — tài chính, kế toán', char: 1, seat: [7, 10], link: 'https://hh-vibecode.github.io/ke-toan/' },
-  { id: 'test', ten: 'Tester', vai: 'Tester — kiểm thử cả 3 app, báo lỗi về đúng nhân sự', char: 3, seat: [11, 10] },
+  { id: 'gd', ten: 'Mr.Mon', cd: 'Giám đốc', vai: 'Giám đốc — nhận việc của anh, chia việc, soát kết quả', char: 0, seat: [9, 3], di: [[8, 2, 'up'], [3, 12, 'left']] },
+  { id: 'mkt', ten: 'Masa', cd: 'Nhân viên MKT / Sale', vai: 'Nhân sự MKT / Sale — báo cáo Marketing & Sale', char: 5, seat: [7, 8], link: 'https://hh-vibecode.github.io/mkt-sale-app/' },
+  { id: 'qc', ten: 'Quang Lê', cd: 'Nhân viên QC CSKH', vai: 'Nhân sự QC CSKH — chất lượng chăm sóc khách', char: 2, seat: [11, 8], link: 'https://hh-vibecode.github.io/qc-cskh/' },
+  { id: 'kt', ten: 'Katy', cd: 'Kế toán', vai: 'Nhân sự Kế toán — tài chính, kế toán', char: 1, seat: [7, 10], link: 'https://hh-vibecode.github.io/ke-toan/' },
+  { id: 'test', ten: 'Tester', cd: 'Kiểm thử', vai: 'Tester — kiểm thử cả 3 app, báo lỗi về đúng nhân sự', char: 3, seat: [11, 10] },
 ];
 const TT = { off: ['Chưa kết nối', '#9ca3af'], lam: ['Đang làm', '#f59e0b'], cho: ['Chờ anh', '#ef4444'], xong: ['Xong việc', '#22c55e'] };
 
@@ -525,7 +528,7 @@ NHAN_SU.forEach(a => {
   a.u = null; a.phien = null; a.ben = BEN[a.id];
   const b = el('button', 'tag'); b.type = 'button';
   a.dot = el('i'); a.mini = el('span', 'mini'); a.miniBar = el('b'); a.mini.append(a.miniBar);
-  b.append(a.dot, document.createTextNode(a.ten), a.mini);
+  const dong = el('span', 'dong'); dong.append(a.dot, document.createTextNode(a.ten), a.mini); b.append(el('span', 'cd', a.cd), dong);
   b.setAttribute('aria-label', a.ten + ' — xem chi tiết'); b.onclick = () => moPanel(a);
   stage.appendChild(b); a.tag = b;
   // Ô trạng thái kiểu phiên Claude Code cạnh đầu nhân vật
