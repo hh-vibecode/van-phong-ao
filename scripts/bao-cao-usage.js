@@ -49,6 +49,9 @@ function tongHop(now = Date.now()) {
       if (t > r.cuoi) r.cuoi = t;
       const m = j.message;
       if (j.type === 'assistant' && m && m.usage && m.id) thayMsg.set(m.id, { t, u: m.usage, model: m.model });
+      // Công cụ vừa dùng: CHỈ lấy tên (Read / Edit / Bash...), không lấy nội dung / đường dẫn
+      if (j.type === 'assistant' && m && Array.isArray(m.content)) for (const c of m.content)
+        if (c && c.type === 'tool_use' && typeof c.name === 'string' && (!r.congCu || t >= r.congCu.luc)) r.congCu = { ten: c.name.slice(0, 40), luc: t };
       const rl = (j.apiErrorParams && j.apiErrorParams.rate_limit_info) || j.quotaLimits;   // chỉ có khi bị hết lượt
       if (rl && rl.resetsAt && (!r.hetLuot || t > r.hetLuot.luc)) r.hetLuot = { luc: t, loai: rl.rateLimitType, moLai: rl.resetsAt * 1000 };
     }
@@ -73,7 +76,7 @@ function tongHop(now = Date.now()) {
     kq[id] = {
       phien: r.phien.size, cuoi: r.cuoi, dangLam: now - r.cuoi < 3 * 60000,
       model: Object.entries(r.model).sort((a, b) => b[1] - a[1]).map(x => x[0])[0] || null,
-      hetLuot: r.hetLuot, ngay: r.ngay, tuan: r.tuan,
+      hetLuot: r.hetLuot, congCu: r.congCu || null, ngay: r.ngay, tuan: r.tuan,
     };
   }
   return { luc: now, tuanTu: tuanNay, nguoi: kq };

@@ -52,6 +52,17 @@
 - **ƯU TIÊN SỐ 1: KHÔNG dùng API tốn tiền thật, chỉ dùng tính năng trong gói** (anh nhắc lại 20/10/2026).
 
 ## 4. NHẬT KÝ
+- **20/10/2026** — USAGE THẬT LÊN WEB (v0.12). Phiên MKT đăng ký tiền tố `vp_` / `vp-` (anh duyệt, commit b7a711c repo MKT). Đã tạo trên Supabase chung:
+  bảng `vp_tai_khoan`, `vp_phien`, `vp_cau_hinh`, `vp_usage` (RLS bật, không policy, revoke anon/authenticated — thử khoá anon thật: đọc / ghi đều 401 / 42501)
+  + Edge Function `vp-api` (verify_jwt false; đăng nhập so băm có muối, phiên 30 ngày lưu băm, sai chờ 1 giây; `gui_usage` cần khoá gửi riêng, chỉ ghi `vp_usage`;
+  CORS chỉ hh-vibecode.github.io + 127.0.0.1:8765). Tự thử 9/9 đạt. Máy anh: lịch Windows **`vp-gui-usage`** mỗi phút (`scripts/gui-usage.vbs` → `gui-usage.js`
+  → `bao-cao-usage.js`), không gọi API Claude. Web: nút Đăng nhập, 30 giây lấy số 1 lần → trạng thái thật (Đang làm / Đang nghỉ / Hết lượt gói), ô phiên
+  trên đầu (công cụ đang dùng — chỉ tên, token hôm nay, giờ làm), bảng thông tin (giờ / token hôm nay + tuần, % phần của người đó, model, hết lượt + giờ mở lại),
+  thẻ usage tuần cả văn phòng, bảng xếp hạng giờ · token thật. Thử trọn luồng bằng Edge chạy ngầm + DevTools: không lỗi JS.
+  Lỗi đã gây (đã sửa trước khi đẩy): tiêu đề chú thích `/*` thiếu `*/` làm cả khối "dữ liệu thật" thành chú thích.
+  CHƯA có: % hạn mức gói (phiên 5h / tuần) — chờ anh chọn (a) endpoint usage không chính thức / (b) anh nhập tay / (c) quy theo token. Tester chưa có phiên riêng → không số.
+  Anh có 2 tài khoản Claude (TK1 / TK2, theo sổ Kế toán) — số token đang cộng chung cả 2 vì cùng thư mục `~/.claude` trên máy.
+- **20/10/2026** — Nhật ký khoá: dùng `SUPABASE_ACCESS_TOKEN` (file khoá app Kế toán) để tạo bảng `vp_*`, ghi tài khoản (băm) + khoá gửi (băm), triển khai `vp-api`; dùng `ANON_KEY` (file khoá app QC) để thử bảng `vp_*` đóng với anon. Không in giá trị. Khoá gửi usage `VP_KHOA_GUI` sinh mới, chỉ nằm trong `vp-keys.local.txt`.
 - **20/10/2026** — Usage thật: `scripts/bao-cao-usage.js` đọc nhật ký phiên Claude Code trên máy anh (`~/.claude/projects/**/*.jsonl`) → mỗi nhân sự: token (vào / ra / ghi cache / đọc cache), giờ làm (khoảng nghỉ > 5 phút không tính), số phiên, model, đang làm hay không, lần HẾT LƯỢT gần nhất + giờ mở lại. Không gọi API, không đọc nội dung chat, chạy 1,7 giây. Thanh trạng thái (statusline — có sẵn % phiên 5h / tuần) KHÔNG chạy trong khung chat VS Code (đã thử, đã gỡ cài đặt thử). % hạn mức liên tục chưa có nguồn chính thức trong VS Code → hỏi anh. Đã nhắn phiên MKT đăng ký tiền tố `vp_` trước khi tạo bảng.
 - **20/10/2026** — Tạo tài khoản đăng nhập web cho anh (`anhhai`, mật khẩu ngẫu nhiên 20 ký tự) → chép vào clipboard anh + lưu `vp-keys.local.txt` (đã kiểm git bỏ qua) kèm bản băm SHA-256 có muối để đặt lên máy chủ. Chưa dùng được tới khi có màn đăng nhập máy chủ.
 - **20/10/2026** — Web v0.11: thanh trái bảng xếp hạng (ghép bản nháp của phiên MKT/Sale, phiên đó KHÔNG sửa repo này): hạng, avatar cắt từ hình nhân vật, giờ · việc · token hiện thẳng trên dòng, điểm, ▲▼ so đầu ngày, huy hiệu (7 ngày không lỗi / Tiết kiệm token / Nhanh nhất tuần / Bắt lỗi giỏi), tab Tuần / Tháng, bấm dòng xem "điểm từ đâu", hộp "Cách tính điểm", nhân viên xuất sắc tuần trước. Chat: anh giao đúng người Mr.Mon đề xuất → Mr.Mon +2, chọn người khác → −3 (chỉ trong trình duyệt). Giả lập tạo lịch sử 2 tuần + sự kiện mới; tắt giả lập thì xoá số giả lập. Bản đồ chuyển sang co giãn liên tục (có thanh trái + khung chat vẫn đủ to). Chưa có số thật: chưa nối máy chủ / nguồn token.

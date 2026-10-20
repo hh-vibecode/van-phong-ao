@@ -144,6 +144,12 @@ h2{font-size:14px;font-weight:800;margin:0}
 .legend i{width:8px;height:8px;border-radius:50%;display:inline-block}
 .ttin{border:1px solid var(--border);border-radius:12px;padding:0;width:440px;max-width:calc(100% - 32px);background:var(--surface);color:var(--text)}
 .ttin::backdrop{background:rgba(0,0,0,.35)}
+.dn-f{display:flex;flex-direction:column;gap:10px}
+.dn-f label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:700;color:var(--text2)}
+.dn-f input{padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);font-size:13px;outline:none}
+.dn-f input:focus{border-color:var(--accent)}
+.dn-loi{color:var(--bad);font-size:12px;font-weight:600;min-height:16px}
+.dn-gc{color:var(--muted);font-size:11px}
 .tt-b{padding:8px 14px 14px}
 .tt-r{display:flex;justify-content:space-between;gap:12px;font-size:12px;padding:6px 0;border-top:1px solid var(--border)}
 .tt-r:first-child{border-top:0}
@@ -205,13 +211,14 @@ body.chat-mo{padding-right:390px}
 <div class="wrap">
   <div class="top">
     <div class="title">Văn phòng ảo</div>
-    <span class="badge warn">Bản giao diện — chưa nối dữ liệu</span>
+    <span class="badge warn" id="tbNoi">Chưa đăng nhập — chưa thấy số thật</span>
     <span class="badge" id="ver"></span>
     <button class="btn" id="theme" type="button">Đổi nền sáng / tối</button>
     <button class="btn" id="nutTT" type="button">Thông tin</button>
+    <button class="btn pri" id="nutDN" type="button">Đăng nhập</button>
   </div>
 
-  <div class="note">Bản thử: chưa nối máy chủ. Chat với Mr.Mon (nút góc phải dưới) đã thử được phân việc, nhưng việc chỉ nằm trên trình duyệt của người đang xem — chưa gửi tới nhân sự, không ai sửa được app nào qua trang này. Nút "giả lập" chỉ để xem hình động, không phải số thật.</div>
+  <div class="note">Usage THẬT (giờ làm, token, đang làm / nghỉ, hết lượt) hiện sau khi anh đăng nhập — máy anh gửi lên mỗi phút, không gọi API. Giao việc qua chat vẫn chỉ nằm trên trình duyệt, chưa gửi tới nhân sự. Nút "giả lập" chỉ để xem hình động.</div>
 
   <div class="khung">
   <!-- Thanh trái: bảng xếp hạng nhân viên xuất sắc (anh Hải 20/10/2026) -->
@@ -226,7 +233,7 @@ body.chat-mo{padding-right:390px}
   <div class="kpi-row">
     <div class="card kpi"><div class="lbl">Việc đang mở</div><div class="val">—</div><div class="sub">chưa nối dữ liệu</div></div>
     <div class="card kpi"><div class="lbl">Chờ anh quyết / duyệt</div><div class="val">—</div><div class="sub">chưa nối dữ liệu</div></div>
-    <div class="card kpi"><div class="lbl">Năng lượng gói Claude — tuần còn lại</div><div class="val" id="kNL">—</div><div class="sub" id="kNLsub">chưa nối dữ liệu usage</div></div>
+    <div class="card kpi"><div class="lbl" id="kNLlbl">Năng lượng gói Claude — tuần còn lại</div><div class="val" id="kNL">—</div><div class="sub" id="kNLsub">chưa nối dữ liệu usage</div></div>
   </div>
 
   <div class="card">
@@ -253,6 +260,8 @@ body.chat-mo{padding-right:390px}
           <div class="row"><span>Còn đi làm trong tuần</span><b id="pTuanReset">—</b></div>
           <div class="row"><span>Phần usage của người này (tuần)</span><b id="pPhan">—</b></div>
           <div class="row"><span>Việc đã làm trong tuần</span><b id="pViecTuan">—</b></div>
+          <div class="row"><span>Giờ làm hôm nay / tuần</span><b id="pGio">—</b></div>
+          <div class="row"><span>Token hôm nay / tuần</span><b id="pTok">—</b></div>
           <div class="row"><span>Model Claude</span><b id="pModel">chưa gắn</b></div>
           <div class="pnote" id="pNote">Chưa nối dữ liệu usage. Cả văn phòng chạy chung 1 gói Claude: hạn mức còn lại là của gói, "phần của người này" tính theo việc người đó chạy.</div>
           <div class="row" id="pLinkRow"><span>App</span><b><a id="pLink" target="_blank" rel="noopener noreferrer">Mở app</a></b></div>
@@ -264,6 +273,8 @@ body.chat-mo{padding-right:390px}
       <span><i style="background:#f59e0b"></i>Đang làm</span>
       <span><i style="background:#ef4444"></i>Chờ anh</span>
       <span><i style="background:#22c55e"></i>Xong việc</span>
+      <span><i style="background:#64748b"></i>Đang nghỉ</span>
+      <span><i style="background:#a855f7"></i>Hết lượt gói</span>
       <span>Bấm vào tên nhân vật để xem chi tiết</span>
     </div>
   </div>
@@ -278,6 +289,16 @@ body.chat-mo{padding-right:390px}
   <div class="foot"><span>Văn phòng ảo · Giám đốc Mr.Mon · Masa · Quang Lê · Katy · Tester</span><span>Mr.Mon</span></div>
 </div>
 
+<dialog class="ttin" id="dnHop" aria-label="Đăng nhập">
+  <div class="cp-h"><div class="cp-t">Đăng nhập Văn phòng ảo</div><button class="btn" id="dnDong" type="button">Đóng</button></div>
+  <form class="tt-b dn-f" id="dnForm">
+    <label>Tài khoản<input id="dnTen" autocomplete="username" required></label>
+    <label>Mật khẩu<input id="dnMk" type="password" autocomplete="current-password" required></label>
+    <div class="dn-loi" id="dnLoi" role="alert"></div>
+    <button class="btn pri" type="submit" id="dnGui">Đăng nhập</button>
+    <div class="dn-gc">Chỉ anh Hải có tài khoản. Mật khẩu kiểm ở máy chủ, trang này không chứa khoá nào.</div>
+  </form>
+</dialog>
 <dialog class="ttin" id="lbLuat" aria-label="Cách tính điểm">
   <div class="cp-h"><div class="cp-t">Cách tính điểm</div><button class="btn" id="lbLuatDong" type="button">Đóng</button></div>
   <div class="tt-b"></div>
@@ -312,7 +333,7 @@ body.chat-mo{padding-right:390px}
 </aside>
 
 <script>
-const APP_VERSION = 'v0.11 · 20/10/2026';
+const APP_VERSION = 'v0.12 · 20/10/2026';
 document.getElementById('ver').textContent = APP_VERSION;
 document.getElementById('ttVer').textContent = APP_VERSION;
 const ttin = document.getElementById('ttin');
@@ -356,7 +377,8 @@ const NHAN_SU = [
   { id: 'kt', ten: 'Katy', cd: 'Agent Kế toán', vai: 'Nhân sự Kế toán — tài chính, kế toán', char: 1, seat: [7, 10], link: 'https://hh-vibecode.github.io/ke-toan/' },
   { id: 'test', ten: 'Tester', cd: 'Agent Kiểm Thử', vai: 'Tester — kiểm thử cả 3 app, báo lỗi về đúng nhân sự', char: 3, seat: [11, 10] },
 ];
-const TT = { off: ['Chưa kết nối', '#9ca3af'], lam: ['Đang làm', '#f59e0b'], cho: ['Chờ anh', '#ef4444'], xong: ['Xong việc', '#22c55e'] };
+const TT = { off: ['Chưa kết nối', '#9ca3af'], lam: ['Đang làm', '#f59e0b'], cho: ['Chờ anh', '#ef4444'], xong: ['Xong việc', '#22c55e'],
+  nghi: ['Đang nghỉ', '#64748b'], het: ['Hết lượt gói', '#a855f7'] };
 
 /* ===================== Tải hình ===================== */
 const loadImg = src => new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => no(new Error(src)); i.src = src; });
@@ -528,7 +550,7 @@ function capNhat(dt) {
       continue;
     }
     const laGD = a.id === 'gd';
-    if (reduce || (demo && a.state === 'sit' && !laGD)) continue;   // giả lập: nhân sự ngồi làm tại chỗ
+    if (reduce || ((demo || a.tt === 'lam' || a.tt === 'het') && a.state === 'sit' && !laGD)) continue;   // đang làm (giả lập / thật): ngồi tại chỗ; đang nghỉ: đi lại
     if ((a.timer -= dt) > 0) continue;
     let goal, gDir, gSit;
     if (a.state === 'sit') {
@@ -621,6 +643,7 @@ function moPanel(a) {
   const gl = demo ? ' (giả lập)' : '', u = a.u, p = a.phien;
   set('pName', a.ten); set('pRole', a.vai);
   set('pStat', TT[a.tt][0] + gl);
+  if (!demo && a.that) { panelThat(a); return; }
   set('pJob', p ? p.viec : '—');
   const nl = u ? 100 - u.tuanDung : null;
   set('pNL', nl == null ? '—' : nl + '%');
@@ -632,6 +655,7 @@ function moPanel(a) {
   set('pPhan', u ? u.phan + '% usage tuần' : '—');
   set('pViecTuan', u ? String(u.viecTuan) : '—');
   set('pModel', u ? u.model : 'chưa gắn');
+  set('pGio', '—'); set('pTok', '—');
   set('pNote', demo ? 'Số liệu đang là GIẢ LẬP để xem giao diện, không phải usage thật.'
     : 'Chưa nối dữ liệu usage. Cả văn phòng chạy chung 1 gói Claude: hạn mức còn lại là của gói, "phần của người này" tính theo việc người đó chạy.');
   const lr = document.getElementById('pLinkRow'); lr.hidden = !a.link; if (a.link) document.getElementById('pLink').href = a.link;
@@ -649,6 +673,7 @@ function veHop() {
   for (const a of NHAN_SU) {
     const nl = a.u ? 100 - a.u.tuanDung : null;
     a.miniBar.style.width = (nl || 0) + '%'; a.miniBar.style.background = mauNL(nl);
+    if (!demo && a.tt === 'het') { a.miniBar.style.width = '100%'; a.miniBar.style.background = TT.het[1]; }
     if (a.u) gt = a.u;
     if (a.noi) {                                                    // Mr.Mon đang nói với ai đó
       a.hop.hidden = false; a.hop.className = 'hop noi ' + a.noi.ben;
@@ -660,7 +685,14 @@ function veHop() {
     const p = a.phien, hien = !!p && a.tt !== 'off' && a.state === 'sit' && !dangNghe;
     a.hop.hidden = !hien; if (!hien) continue;
     a.hop.className = 'hop ' + a.ben + ' ' + a.tt;
-    if (a.tt === 'lam') {
+    if (a.tt === 'lam' && p.that) {                                 // phiên Claude Code THẬT (từ nhật ký trên máy anh)
+      const cc = a.that.congCu;
+      a.hSp.textContent = SPIN[spinI]; a.hTxt.textContent = p.dongTu + '…';
+      a.hGio.textContent = soTok(p.token) + ' tok hôm nay';
+      a.hCong.textContent = ''; a.hCong.append(el('b', null, cc ? cc.ten : 'Claude'), document.createTextNode(cc ? ' · ' + truoc(cc.luc) : ''));
+      a.hViec.textContent = 'Giờ làm hôm nay: ' + soGio(a.that.ngay.ms / 1000);
+      continue;
+    } else if (a.tt === 'lam') {
       const giay = Math.floor((Date.now() - p.batDau) / 1000);
       a.hSp.textContent = SPIN[spinI]; a.hTxt.textContent = p.dongTu + '…';
       a.hGio.textContent = (giay >= 60 ? Math.floor(giay / 60) + 'm' + pad(giay % 60) : giay + 's') + ' · ' + soTok(p.token) + ' tok';
@@ -674,6 +706,8 @@ function veHop() {
     }
     a.hViec.textContent = 'Việc: ' + p.viec;
   }
+  if (!demo && USAGE) { kpiThat(); return; }
+  set('kNLlbl', 'Năng lượng gói Claude — tuần còn lại');
   set('kNL', gt ? (100 - gt.tuanDung) + '%' : '—');
   set('kNLsub', gt ? 'đặt lại sau ' + conNgay(gt.tuanReset) + ' ngày (' + gioVN(gt.tuanReset) + ')' + (demo ? ' — giả lập' : '') : 'chưa nối dữ liệu usage');
 }
@@ -722,7 +756,7 @@ nutDemo.onclick = () => {
   } else {
     NHAN_SU.forEach(a => { a.tt = 'off'; a.u = null; a.phien = null; a._ttCu = null; });
     for (let i = SU_KIEN.length - 1; i >= 0; i--) if (SU_KIEN[i].gl) SU_KIEN.splice(i, 1);   // bỏ số giả lập
-    if (dangXem) moPanel(dangXem); veLB();
+    apUsage(); if (dangXem) moPanel(dangXem); veLB();
   }
 };
 
@@ -850,6 +884,102 @@ themTin('gd', [TX('Chào anh Hải. Anh nhắn việc, em xem thuộc app nào r
   B('Katy'), TX(' (Kế toán) hoặc '), B('Tester'), TX('. Việc nào dễ nhầm em hỏi lại anh.\nHiện trang chưa nối máy chủ: em đề xuất được, nhưng chưa gửi việc tới nhân sự.')]);
 chuaDoc = 0; fabN.hidden = true;
 
+/* ===================== DỮ LIỆU THẬT: đăng nhập + usage (Edge Function vp-api) ===================== */
+// Trang KHÔNG chứa khoá. Đăng nhập kiểm ở máy chủ; phiên lưu trong trình duyệt của anh. Usage do máy anh gửi lên mỗi phút
+// (scripts/gui-usage.js đọc nhật ký phiên Claude Code — không gọi API, không tốn tiền). Chưa đăng nhập: không thấy số nào.
+const API_VP = 'https://bcrpxfvvjsjpvbksqzls.supabase.co/functions/v1/vp-api';
+let PHIEN = null, USAGE = null, USAGE_LUC = 0, usageTimer = null;
+try { PHIEN = localStorage.getItem('vp_phien'); } catch (e) {}
+Object.assign(DONG_TU, { Glob: 'Đang tìm', PowerShell: 'Đang chạy lệnh', Agent: 'Đang giao việc phụ', WebSearch: 'Đang tra web',
+  WebFetch: 'Đang đọc web', Skill: 'Đang dùng kỹ năng', TodoWrite: 'Đang lập việc', NotebookEdit: 'Đang sửa' });
+async function goiVP(body) {
+  const r = await fetch(API_VP, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) { const e = new Error(j.loi || ('Lỗi máy chủ ' + r.status)); e.s = r.status; throw e; }
+  return j;
+}
+const tokTong = o => o ? (o.tokVao || 0) + (o.tokRa || 0) + (o.tokGhiCache || 0) : 0;   // không tính đọc cache (rẻ, cộng riêng)
+const truoc = ms => { const g = Math.max(0, Math.round((Date.now() - ms) / 1000)); return g < 60 ? g + ' giây trước' : g < 3600 ? Math.round(g / 60) + ' phút trước' : Math.round(g / 3600) + ' giờ trước'; };
+function apUsage() {
+  const now = Date.now();
+  NHAN_SU.forEach(a => {
+    const s = USAGE && USAGE[a.id];
+    a.that = s || null;
+    if (demo) return;
+    if (!s) { a.tt = 'off'; a.phien = null; return; }
+    const het = s.hetLuot && s.hetLuot.moLai > now, dang = now - s.cuoi < 4 * 60000;
+    a.tt = het ? 'het' : dang ? 'lam' : 'nghi';
+    if (a.tt === 'lam' && a.state === 'stay') a.timer = 0;            // đang đi nghỉ mà có việc -> về chỗ
+    a.phien = dang && !het ? { that: true, viec: 'Phiên Claude Code', dongTu: DONG_TU[(s.congCu || {}).ten] || 'Đang làm', token: tokTong(s.ngay) } : null;
+  });
+  if (dangXem) moPanel(dangXem);
+}
+function panelThat(a) {
+  const s = a.that, now = Date.now(), het = s.hetLuot && s.hetLuot.moLai > now;
+  const tongTuan = Object.values(USAGE || {}).reduce((t, x) => t + tokTong(x.tuan), 0);
+  set('pJob', a.tt === 'lam' ? 'Phiên Claude Code đang chạy' : '—');
+  set('pNL', het ? 'Hết lượt' : 'chưa có % gói');
+  const bar = document.getElementById('pNLbar'); bar.style.width = het ? '100%' : '0'; bar.style.background = TT.het[1];
+  set('pPhien', het ? (s.hetLuot.loai === 'five_hour' ? 'Hết lượt phiên 5 giờ' : 'Hết lượt (' + s.hetLuot.loai + ')') : 'chưa có %');
+  set('pPhienReset', het ? gioVN(new Date(s.hetLuot.moLai)) : '—');
+  set('pTuan', soTok(tokTong(s.tuan)) + ' token');
+  const cuoiTuan = dauTuanVN(now) + 7 * 86400000;
+  set('pTuanReset', Math.ceil((cuoiTuan - now) / 86400000) + ' ngày (tính cả hôm nay, tới hết Chủ nhật)');
+  set('pPhan', tongTuan ? Math.round(tokTong(s.tuan) / tongTuan * 100) + '% usage cả văn phòng' : '—');
+  set('pViecTuan', '—');
+  set('pGio', soGio(s.ngay.ms / 1000) + ' / ' + soGio(s.tuan.ms / 1000));
+  set('pTok', soTok(tokTong(s.ngay)) + ' / ' + soTok(tokTong(s.tuan)));
+  set('pModel', s.model || '—');
+  set('pNote', 'Số THẬT từ nhật ký Claude Code trên máy anh (không gọi API), máy gửi lên mỗi phút — lần cuối ' + truoc(USAGE_LUC) + '. '
+    + '% hạn mức gói chưa có nguồn chính thức trong VS Code' + (s.hetLuot ? '; hết lượt gần nhất ' + gioVN(new Date(s.hetLuot.luc)) : '') + '.');
+  const lr = document.getElementById('pLinkRow'); lr.hidden = !a.link; if (a.link) document.getElementById('pLink').href = a.link;
+  panel.hidden = false;
+}
+function kpiThat() {
+  const ds = Object.values(USAGE), now = Date.now(), tong = ds.reduce((t, x) => t + tokTong(x.tuan), 0);
+  const het = ds.map(x => x.hetLuot).filter(Boolean).sort((p, q) => q.luc - p.luc)[0];
+  set('kNLlbl', 'Usage tuần này — cả văn phòng (số thật)');
+  set('kNL', soTok(tong) + ' tok');
+  set('kNLsub', (het && het.moLai > now ? 'ĐANG HẾT LƯỢT — mở lại ' + gioVN(new Date(het.moLai)) : het ? 'hết lượt gần nhất ' + gioVN(new Date(het.luc)) : 'chưa hết lượt lần nào')
+    + ' · cập nhật ' + truoc(USAGE_LUC));
+}
+async function layUsage() {
+  if (!PHIEN) return;
+  try {
+    const j = await goiVP({ viec: 'usage', phien: PHIEN });
+    USAGE = {}; j.ds.forEach(x => { USAGE[x.nguoi] = x.so_lieu; });
+    USAGE_LUC = Math.max(0, ...j.ds.map(x => Date.parse(x.cap_nhat)));
+    apUsage(); veLB();
+  } catch (e) { if (e.s === 401) dangXuat(true); }
+}
+const nutDN = document.getElementById('nutDN'), dnHop = document.getElementById('dnHop');
+function nutDangNhap(ten) {
+  nutDN.textContent = ten ? ten + ' · Đăng xuất' : 'Đăng nhập'; nutDN.classList.toggle('pri', !ten);
+  const tb = document.getElementById('tbNoi'); tb.textContent = ten ? 'Đã nối usage thật' : 'Chưa đăng nhập — chưa thấy số thật'; tb.className = 'badge' + (ten ? '' : ' warn');
+}
+function batDauThat(ten) { nutDangNhap(ten); layUsage(); clearInterval(usageTimer); usageTimer = setInterval(layUsage, 30000); }
+function dangXuat(hetHan) {
+  const p = PHIEN; PHIEN = null; USAGE = null; clearInterval(usageTimer);
+  try { localStorage.removeItem('vp_phien'); } catch (e) {}
+  if (p && !hetHan) goiVP({ viec: 'dang_xuat', phien: p }).catch(() => {});
+  nutDangNhap(null); apUsage(); veLB();
+}
+nutDN.onclick = () => {
+  if (PHIEN) { if (confirm('Đăng xuất khỏi Văn phòng ảo?')) dangXuat(); return; }
+  set('dnLoi', ''); dnHop.showModal(); document.getElementById('dnTen').focus();
+};
+document.getElementById('dnDong').onclick = () => dnHop.close();
+document.getElementById('dnForm').onsubmit = async e => {
+  e.preventDefault();
+  const nut = document.getElementById('dnGui'); nut.disabled = true; set('dnLoi', '');
+  try {
+    const j = await goiVP({ viec: 'dang_nhap', ten: document.getElementById('dnTen').value, mk: document.getElementById('dnMk').value });
+    PHIEN = j.phien; try { localStorage.setItem('vp_phien', PHIEN); } catch (er) {}
+    document.getElementById('dnMk').value = ''; dnHop.close(); batDauThat(j.ten);
+  } catch (er) { set('dnLoi', er.message); } finally { nut.disabled = false; }
+};
+if (PHIEN) goiVP({ viec: 'kiem_phien', phien: PHIEN }).then(j => batDauThat(j.ten)).catch(er => { if (er.s === 401) dangXuat(true); });
+
 /* ===================== BẢNG XẾP HẠNG NHÂN VIÊN XUẤT SẮC (thanh trái, cập nhật trực tiếp) ===================== */
 // Anh Hải 20/10/2026: "thanh bên trái, avatar + chỉ số nhân sự: làm được bao nhiêu tiếng, xử lý bao nhiêu việc, đốt bao nhiêu token —
 // quy ra bộ điểm làm bảng xếp hạng nhân viên xuất sắc, real time". Bản nháp từ phiên MKT/Sale, Mr.Mon ghép + chỉnh.
@@ -896,7 +1026,8 @@ function bangDiem(tu, den) {
   // điểm hiệu quả: ai có việc xong / 1 triệu token cao nhất (cần ≥ 3 việc xong) được +5
   const hq = ds.filter(x => x.xong >= 3 && x.tok > 0).sort((p, q) => q.xong / q.tok - p.xong / p.tok)[0];
   if (hq) { hq.diem += LUAT_DIEM.hieu_qua.d; hq.chiTiet.hieu_qua = LUAT_DIEM.hieu_qua.d; hq.hq = true; }
-  return ds.sort((p, q) => q.diem - p.diem || q.xong - p.xong);
+  const thatTok = a => (!demo && a.that) ? tokTong(a.that.tuan) : 0;   // hoà điểm: ai làm nhiều (token thật) xếp trên
+  return ds.sort((p, q) => q.diem - p.diem || q.xong - p.xong || thatTok(q.a) - thatTok(p.a));
 }
 function huyHieu(a, tuan, bangTuan) {
   const h = [], now = Date.now();
@@ -925,8 +1056,9 @@ function veLB() {
   const k = (kk, t) => `<button class="btn${lbKy === kk ? ' on' : ''}" type="button" data-ky="${kk}">${t}</button>`;
   lb.querySelector('.lb-ky').innerHTML = k('tuan', 'Tuần này') + k('thang', 'Tháng này');
   const ng = lb.querySelector('.lb-nguon');
-  ng.textContent = coGL ? 'Số giả lập' : coSK ? 'Trên trình duyệt này' : 'Chưa nối dữ liệu';
-  ng.className = 'badge lb-nguon' + (coGL || !coSK ? ' warn' : '');
+  const coThat = !demo && !!USAGE;
+  ng.textContent = coGL ? 'Số giả lập' : coThat ? 'Giờ · token: số thật' : coSK ? 'Trên trình duyệt này' : 'Chưa nối dữ liệu';
+  ng.className = 'badge lb-nguon' + (coGL || (!coSK && !coThat) ? ' warn' : '');
   const dsEl = lb.querySelector('.lb-ds');
   ds.forEach((x, i) => {
     const a = x.a; let r = dsEl.querySelector(`[data-ai="${a.id}"]`);
@@ -940,13 +1072,15 @@ function veLB() {
     dsEl.appendChild(r);   // sắp lại theo điểm
     veAvatar(r.querySelector('.lb-av'), a);
     const dl = a.phien && a.tt === 'lam' ? a.phien.token : 0;   // token của việc đang chạy
-    r.querySelector('.lb-h').textContent = coSK ? '#' + (i + 1) : '—';
+    r.querySelector('.lb-h').textContent = coSK || coThat ? '#' + (i + 1) : '—';
     r.classList.toggle('nhat', i === 0 && x.diem > 0);
     r.querySelector('.lb-ten').textContent = a.ten;
     r.querySelector('.lb-cd').textContent = a.cd;
-    r.querySelector('.lb-cs').textContent = coSK ? `${soGio(x.giay)} · ${x.xong} việc · ${soTok(x.tok + dl)} tok` : 'giờ · việc · token: —';
+    const th = coThat && a.that ? a.that.tuan : null;   // giờ + token thật (tuần) từ nhật ký Claude Code
+    r.querySelector('.lb-cs').textContent = th ? `${soGio(th.ms / 1000)} · ${x.xong}\u00a0việc · ${soTok(tokTong(th))}\u00a0tok`
+      : coSK ? `${soGio(x.giay)} · ${x.xong}\u00a0việc · ${soTok(x.tok + dl)}\u00a0tok` : 'giờ · việc · token: —';
     r.querySelector('.lb-hh').innerHTML = huyHieu(a, bangTuan.find(y => y.a === a), bangTuan).map(t => `<i>${esc(t)}</i>`).join('');
-    r.querySelector('.lb-so').textContent = coSK ? x.diem.toLocaleString('vi-VN') : '—';
+    r.querySelector('.lb-so').textContent = coSK || coThat ? x.diem.toLocaleString('vi-VN') : '—';
     const cu = hangCu[a.id], mt = r.querySelector('.lb-mt');
     if (cu == null || !coSK || cu === i) { mt.textContent = coSK ? 'điểm' : ''; mt.className = 'lb-mt'; }
     else { mt.textContent = (cu > i ? '▲' : '▼') + Math.abs(cu - i); mt.className = 'lb-mt ' + (cu > i ? 'len' : 'xuong'); }
