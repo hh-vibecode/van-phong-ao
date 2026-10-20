@@ -57,11 +57,16 @@ a:hover{text-decoration:underline}
 .lb-t{min-width:0;display:flex;flex-direction:column;line-height:1.3}
 .lb-ten{font-size:12.5px}
 .lb-cd{font-size:10px;color:var(--muted)}
-.lb-cs{font-size:10.5px;color:var(--text2);font-variant-numeric:tabular-nums}
 .lb-hh{display:flex;flex-wrap:wrap;gap:3px;margin-top:2px}
 .lb-hh i{font-style:normal;font-size:9px;font-weight:700;padding:0 5px;border-radius:8px;background:var(--ok-bg);color:var(--ok)}
 .lb-d{display:flex;flex-direction:column;align-items:flex-end;line-height:1.2}
-.lb-so{font-size:16px;font-variant-numeric:tabular-nums}
+.lb-so{font-size:15px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.lb-dv{font-size:10.5px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.lb-bar{display:block;height:4px;background:var(--bg2);border-radius:2px;margin-top:5px;overflow:hidden}
+.lb-bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .4s}
+.lb-r.nhat .lb-bar i{background:#f59e0b}
+.lb-mt.tt-lam{color:#d97706}
+.lb-mt.tt-het{color:#a855f7}
 .lb-mt{font-size:10px;color:var(--muted);font-weight:700}
 .lb-mt.len{color:var(--ok)}
 .lb-mt.xuong{color:var(--bad)}
@@ -280,7 +285,7 @@ body.chat-mo{padding-right:390px}
   </div>
 
   <div class="card" style="margin-top:14px">
-    <div class="head"><h2>Bảng việc</h2><span class="badge">Việc chỉ nằm trên trang này — chưa nối máy chủ</span></div>
+    <div class="head"><h2>Bảng việc</h2><span class="badge warn">Việc chỉ lưu trên trình duyệt này — nhân sự chưa có máy chạy tự động</span></div>
     <div class="board" id="board"></div>
   </div>
   </main>
@@ -311,7 +316,7 @@ body.chat-mo{padding-right:390px}
     <div class="tt-r"><span>Giấy phép</span><b><a href="assets/pa/LICENSE-pixel-agents.txt" target="_blank">MIT</a>, © 2026 Pablo De Lucca</b></div>
     <div class="tt-r"><span>Nhân vật dựa trên</span><b><a href="https://jik-a-4.itch.io/metrocity-free-topdown-character-pack" target="_blank" rel="noopener noreferrer">Metro City — JIK-A-4</a></b></div>
     <div class="tt-r"><span>Logic giao việc, chỗ ngồi, trạng thái</span><b>Văn phòng ảo</b></div>
-    <div class="tt-r"><span>Bảo mật</span><b>Trang không chứa khoá; chưa nối máy chủ</b></div>
+    <div class="tt-r"><span>Bảo mật</span><b>Trang không chứa khoá; đăng nhập kiểm ở máy chủ</b></div>
   </div>
 </dialog>
 
@@ -322,7 +327,7 @@ body.chat-mo{padding-right:390px}
 </button>
 <aside class="chatp" id="chatp" hidden aria-label="Chat với Mr.Mon">
   <div class="cp-h">
-    <div><div class="cp-t">Mr.Mon · Giám đốc</div><div class="cp-s">Chưa nối máy chủ — Mr.Mon đề xuất phân việc ngay trên trang, chưa gửi việc tới nhân sự</div></div>
+    <div><div class="cp-t">Mr.Mon · Giám đốc</div><div class="cp-s" id="cpTT">Mr.Mon phân việc ngay. Nhân sự CHƯA có máy chạy tự động nên việc chưa được làm thật.</div></div>
     <button class="btn" id="cpClose" type="button">Đóng</button>
   </div>
   <div class="cp-m" id="cpM" aria-live="polite"></div>
@@ -333,7 +338,7 @@ body.chat-mo{padding-right:390px}
 </aside>
 
 <script>
-const APP_VERSION = 'v0.12 · 20/10/2026';
+const APP_VERSION = 'v0.13 · 20/10/2026';
 document.getElementById('ver').textContent = APP_VERSION;
 document.getElementById('ttVer').textContent = APP_VERSION;
 const ttin = document.getElementById('ttin');
@@ -768,7 +773,7 @@ const TRANG_THAI = [
   ['cho_anh', 'Chờ anh trả lời'], ['cho_duyet', 'Chờ anh duyệt'], ['xong', 'Xong'],
 ];
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-// Việc chỉ nằm trong trình duyệt người đang xem (chưa nối máy chủ): không lưu, không gửi đi đâu
+// Việc chỉ nằm trong trình duyệt người đang xem (nhân sự chưa có máy chạy tự động): không lưu, không gửi đi đâu
 const VIEC = [];
 let soViec = 0;
 function veBang() {
@@ -852,7 +857,7 @@ function giao(v, k, dung) {
   v.giaoCho = k; v.tt = 'moi'; veBang();
   if (dung === true) ghiSK('gd', 'giao_dung'); else if (dung === false) ghiSK('gd', 'giao_nham');   // chấm Mr.Mon phân việc
   veLB();
-  themTin('gd', [TX(`Đã ghi việc #${v.id} cho `), B(TEN[k]), TX(` (${APP[k]}). Chưa gửi được vì trang chưa nối máy chủ — khi nối, ${TEN[k]} sẽ nhận việc ngay và báo kết quả ở đây.`)]);
+  themTin('gd', [TX(`Đã ghi việc #${v.id} cho `), B(TEN[k]), TX(` (${APP[k]}). ${TEN[k]} chưa làm được vì nhân sự chưa có máy chạy tự động — cần anh tạo token gói Claude (bước 5 trong kế hoạch). Có rồi thì ${TEN[k]} nhận việc ngay và báo kết quả ở đây.`)]);
 }
 function traLoi(v, text) {
   if (!PV) { themTin('gd', 'Em chưa tải được bảng phân việc (phan-viec.json). Anh tải lại trang giúp em.'); return; }
@@ -881,7 +886,7 @@ document.getElementById('cpF').onsubmit = e => {
 };
 cpIn.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); document.getElementById('cpF').requestSubmit(); } });
 themTin('gd', [TX('Chào anh Hải. Anh nhắn việc, em xem thuộc app nào rồi đề xuất giao cho '), B('Masa'), TX(' (MKT/Sale), '), B('Quang Lê'), TX(' (QC), '),
-  B('Katy'), TX(' (Kế toán) hoặc '), B('Tester'), TX('. Việc nào dễ nhầm em hỏi lại anh.\nHiện trang chưa nối máy chủ: em đề xuất được, nhưng chưa gửi việc tới nhân sự.')]);
+  B('Katy'), TX(' (Kế toán) hoặc '), B('Tester'), TX('. Việc nào dễ nhầm em hỏi lại anh.\nLưu ý: nhân sự chưa có máy chạy tự động, nên việc anh giao em ghi lại và chọn người, nhưng chưa ai làm thật.')]);
 chuaDoc = 0; fabN.hidden = true;
 
 /* ===================== DỮ LIỆU THẬT: đăng nhập + usage (Edge Function vp-api) ===================== */
@@ -1048,60 +1053,87 @@ function veAvatar(cv, a) {
   x.drawImage(img, 16, 0, 16, 24, 4, 2, 32, 48); cv.dataset.ve = 1;   // khung đứng yên, nhìn thẳng (đầu + thân)
 }
 function veLB() {
-  const now = Date.now(), tu = lbKy === 'tuan' ? dauTuanVN(now) : dauThangVN(now);
-  const ds = bangDiem(tu), homQua = bangDiem(tu, dauNgayVN(now)), bangTuan = lbKy === 'tuan' ? ds : bangDiem(dauTuanVN(now));
-  const hangCu = {}; homQua.forEach((x, i) => { hangCu[x.a.id] = i; });
-  const coGL = SU_KIEN.some(s => s.gl), coSK = SU_KIEN.length > 0;
-  const tuanTruoc = bangDiem(dauTuanVN(now) - 7 * 86400000, dauTuanVN(now)).filter(x => x.diem > 0)[0];
+  const now = Date.now();
+  const coGL = SU_KIEN.some(s => s.gl), coSK = SU_KIEN.length > 0, coThat = !demo && !!USAGE;
+  // Có việc được chấm điểm -> xếp theo ĐIỂM; chưa có -> xếp theo GIỜ LÀM THẬT (từ nhật ký Claude Code); chưa đăng nhập -> trống
+  const cheDo = coSK ? 'diem' : coThat ? 'gio' : 'trong';
+  const kyHop = cheDo === 'diem' ? ['tuan', 'thang'] : ['tuan', 'ngay'];
+  if (!kyHop.includes(lbKy)) lbKy = 'tuan';
   const k = (kk, t) => `<button class="btn${lbKy === kk ? ' on' : ''}" type="button" data-ky="${kk}">${t}</button>`;
-  lb.querySelector('.lb-ky').innerHTML = k('tuan', 'Tuần này') + k('thang', 'Tháng này');
+  lb.querySelector('.lb-ky').innerHTML = cheDo === 'diem' ? k('tuan', 'Tuần này') + k('thang', 'Tháng này') : k('tuan', 'Tuần này') + k('ngay', 'Hôm nay');
   const ng = lb.querySelector('.lb-nguon');
-  const coThat = !demo && !!USAGE;
-  ng.textContent = coGL ? 'Số giả lập' : coThat ? 'Giờ · token: số thật' : coSK ? 'Trên trình duyệt này' : 'Chưa nối dữ liệu';
-  ng.className = 'badge lb-nguon' + (coGL || (!coSK && !coThat) ? ' warn' : '');
+  ng.textContent = cheDo === 'diem' ? (coGL ? 'Số giả lập' : 'Điểm') : cheDo === 'gio' ? 'Số thật · theo giờ làm' : 'Đăng nhập để xem';
+  ng.className = 'badge lb-nguon' + (coGL || cheDo === 'trong' ? ' warn' : '');
+
+  const tu = lbKy === 'thang' ? dauThangVN(now) : dauTuanVN(now);
+  const diemDs = bangDiem(tu), homQua = bangDiem(tu, dauNgayVN(now)), bangTuan = bangDiem(dauTuanVN(now));
+  const hangCu = {}; homQua.forEach((x, i) => { hangCu[x.a.id] = i; });
+  const so = a => (coThat && a.that) ? (lbKy === 'ngay' ? a.that.ngay : a.that.tuan) : null;   // số thật của kỳ đang xem
+  let ds;
+  if (cheDo === 'diem') ds = diemDs.map(x => ({ ...x, gt: x.diem }));
+  else ds = NHAN_SU.map(a => { const s = so(a); return { a, s, gt: s ? s.ms : -1, ...diemDs.find(y => y.a === a) }; }).sort((p, q) => q.gt - p.gt);
+  const max = Math.max(1, ...ds.map(x => x.gt));
   const dsEl = lb.querySelector('.lb-ds');
   ds.forEach((x, i) => {
     const a = x.a; let r = dsEl.querySelector(`[data-ai="${a.id}"]`);
     if (!r) {   // giữ phần tử cũ để avatar không vẽ lại liên tục
       r = el('div', 'lb-r'); r.dataset.ai = a.id;
       r.innerHTML = `<button class="lb-dong" type="button"><span class="lb-h"></span><canvas class="lb-av" width="40" height="48"></canvas>
-        <span class="lb-t"><b class="lb-ten"></b><span class="lb-cd"></span><span class="lb-cs"></span><span class="lb-hh"></span></span>
-        <span class="lb-d"><b class="lb-so"></b><span class="lb-mt"></span></span></button><div class="lb-ct" hidden></div>`;
+        <span class="lb-t"><b class="lb-ten"></b><span class="lb-cd"></span><span class="lb-bar"><i></i></span><span class="lb-hh"></span></span>
+        <span class="lb-d"><b class="lb-so"></b><span class="lb-dv"></span><span class="lb-mt"></span></span></button><div class="lb-ct" hidden></div>`;
       r.querySelector('.lb-dong').onclick = () => { lbMo = lbMo === a.id ? null : a.id; veLB(); };
     }
-    dsEl.appendChild(r);   // sắp lại theo điểm
+    dsEl.appendChild(r);   // sắp lại theo thứ hạng
     veAvatar(r.querySelector('.lb-av'), a);
-    const dl = a.phien && a.tt === 'lam' ? a.phien.token : 0;   // token của việc đang chạy
-    r.querySelector('.lb-h').textContent = coSK || coThat ? '#' + (i + 1) : '—';
-    r.classList.toggle('nhat', i === 0 && x.diem > 0);
+    const coGT = x.gt > 0;
+    r.querySelector('.lb-h').textContent = coGT ? '#' + (i + 1) : '—';
+    r.classList.toggle('nhat', i === 0 && coGT);
     r.querySelector('.lb-ten').textContent = a.ten;
     r.querySelector('.lb-cd').textContent = a.cd;
-    const th = coThat && a.that ? a.that.tuan : null;   // giờ + token thật (tuần) từ nhật ký Claude Code
-    r.querySelector('.lb-cs').textContent = th ? `${soGio(th.ms / 1000)} · ${x.xong}\u00a0việc · ${soTok(tokTong(th))}\u00a0tok`
-      : coSK ? `${soGio(x.giay)} · ${x.xong}\u00a0việc · ${soTok(x.tok + dl)}\u00a0tok` : 'giờ · việc · token: —';
-    r.querySelector('.lb-hh').innerHTML = huyHieu(a, bangTuan.find(y => y.a === a), bangTuan).map(t => `<i>${esc(t)}</i>`).join('');
-    r.querySelector('.lb-so').textContent = coSK || coThat ? x.diem.toLocaleString('vi-VN') : '—';
-    const cu = hangCu[a.id], mt = r.querySelector('.lb-mt');
-    if (cu == null || !coSK || cu === i) { mt.textContent = coSK ? 'điểm' : ''; mt.className = 'lb-mt'; }
-    else { mt.textContent = (cu > i ? '▲' : '▼') + Math.abs(cu - i); mt.className = 'lb-mt ' + (cu > i ? 'len' : 'xuong'); }
+    r.querySelector('.lb-bar i').style.width = (coGT ? x.gt / max * 100 : 0) + '%';
+    r.querySelector('.lb-hh').innerHTML = cheDo === 'diem' ? huyHieu(a, bangTuan.find(y => y.a === a), bangTuan).map(t => `<i>${esc(t)}</i>`).join('') : '';
+    const lso = r.querySelector('.lb-so'), ldv = r.querySelector('.lb-dv'), mt = r.querySelector('.lb-mt');
+    mt.className = 'lb-mt'; mt.textContent = '';
+    if (cheDo === 'diem') {
+      lso.textContent = x.diem.toLocaleString('vi-VN'); ldv.textContent = 'điểm';
+      const cu = hangCu[a.id];
+      if (cu != null && cu !== i) { mt.textContent = (cu > i ? '▲' : '▼') + Math.abs(cu - i); mt.className = 'lb-mt ' + (cu > i ? 'len' : 'xuong'); }
+    } else if (x.s) {
+      lso.textContent = soGio(x.s.ms / 1000); ldv.textContent = soTok(tokTong(x.s)) + ' tok';
+      mt.textContent = TT[a.tt] ? TT[a.tt][0] : ''; mt.className = 'lb-mt tt-' + a.tt;
+    } else { lso.textContent = '—'; ldv.textContent = cheDo === 'trong' ? '' : 'chưa có phiên'; }
+
     const ct = r.querySelector('.lb-ct'); ct.hidden = lbMo !== a.id;
-    if (lbMo === a.id) {
-      const dn = thongKe(a.id, dauNgayVN(now));
-      const hq = x.tok ? (x.xong / (x.tok / 1e6)).toFixed(1).replace('.', ',') : '—';
-      const dong = (t, v) => `<div class="lb-cr"><span>${t}</span><b>${v}</b></div>`, ky = lbKy === 'tuan' ? 'tuần' : 'tháng';
-      ct.innerHTML = dong('Giờ làm (' + ky + ')', soGio(x.giay))
-        + dong('Việc xong / bị trả lại / gây lỗi', x.xong + ' / ' + x.traLai + ' / ' + x.loi)
-        + dong('Đang làm · chờ anh', (a.tt === 'lam' ? 1 : 0) + ' · ' + (a.tt === 'cho' ? 1 : 0))
-        + dong('Token hôm nay', soTok(dn.tok + dl)) + dong('Token ' + ky, soTok(x.tok + dl))
-        + dong('Hiệu quả (việc / 1 triệu token)', hq)
-        + '<div class="lb-cx">Điểm từ đâu</div>'
-        + (Object.keys(x.chiTiet).length ? Object.entries(x.chiTiet).sort((p, q) => q[1] - p[1]).map(([l, d]) =>
-            `<div class="lb-cr"><span>${esc(LUAT_DIEM[l].ten)}</span><b class="${d < 0 ? 'am' : ''}">${d > 0 ? '+' : ''}${d}</b></div>`).join('')
-          : '<div class="lb-cr"><span>Chưa có điểm trong kỳ</span><b>0</b></div>');
+    if (lbMo !== a.id) return;
+    const dong = (t, v) => `<div class="lb-cr"><span>${t}</span><b>${v}</b></div>`;
+    if (cheDo !== 'diem') {
+      const t = a.that;
+      ct.innerHTML = !t ? '<div class="lb-cr"><span>Chưa có phiên Claude Code nào của người này</span><b></b></div>'
+        : dong('Giờ làm hôm nay / tuần', soGio(t.ngay.ms / 1000) + ' / ' + soGio(t.tuan.ms / 1000))
+        + dong('Token hôm nay / tuần', soTok(tokTong(t.ngay)) + ' / ' + soTok(tokTong(t.tuan)))
+        + dong('Đọc lại bộ nhớ đệm (tuần)', soTok(t.tuan.tokDocCache || 0))
+        + dong('Số phiên tuần này', String(t.phien)) + dong('Model', t.model || '—')
+        + dong('Hoạt động cuối', truoc(t.cuoi))
+        + dong('Hết lượt gần nhất', t.hetLuot ? gioVN(new Date(t.hetLuot.luc)) : 'chưa')
+        + '<div class="lb-cx">Điểm thưởng</div><div class="lb-cr"><span>Bắt đầu tính khi nhân sự nhận việc qua văn phòng ảo</span><b></b></div>';
+      return;
     }
+    const dn = thongKe(a.id, dauNgayVN(now)), dl = a.phien && a.tt === 'lam' ? (a.phien.token || 0) : 0;
+    const hq = x.tok ? (x.xong / (x.tok / 1e6)).toFixed(1).replace('.', ',') : '—', ky = lbKy === 'tuan' ? 'tuần' : 'tháng';
+    ct.innerHTML = dong('Giờ làm (' + ky + ')', soGio(x.giay))
+      + dong('Việc xong / bị trả lại / gây lỗi', x.xong + ' / ' + x.traLai + ' / ' + x.loi)
+      + dong('Token hôm nay', soTok(dn.tok + dl)) + dong('Token ' + ky, soTok(x.tok + dl))
+      + dong('Hiệu quả (việc / 1 triệu token)', hq)
+      + '<div class="lb-cx">Điểm từ đâu</div>'
+      + (Object.keys(x.chiTiet).length ? Object.entries(x.chiTiet).sort((p, q) => q[1] - p[1]).map(([l, d]) =>
+          `<div class="lb-cr"><span>${esc(LUAT_DIEM[l].ten)}</span><b class="${d < 0 ? 'am' : ''}">${d > 0 ? '+' : ''}${d}</b></div>`).join('')
+        : '<div class="lb-cr"><span>Chưa có điểm trong kỳ</span><b>0</b></div>');
   });
-  lb.querySelector('.lb-xs').innerHTML = tuanTruoc ? 'Nhân viên xuất sắc tuần trước: <b>' + esc(tuanTruoc.a.ten) + '</b> · ' + tuanTruoc.diem + ' điểm'
-    : 'Nhân viên xuất sắc tuần trước: chưa có';
+  const tuanTruoc = bangDiem(dauTuanVN(now) - 7 * 86400000, dauTuanVN(now)).filter(x => x.diem > 0)[0];
+  lb.querySelector('.lb-xs').innerHTML = cheDo === 'diem'
+    ? (tuanTruoc ? 'Nhân viên xuất sắc tuần trước: <b>' + esc(tuanTruoc.a.ten) + '</b> · ' + tuanTruoc.diem + ' điểm' : 'Nhân viên xuất sắc tuần trước: chưa có')
+    : cheDo === 'gio' ? 'Đang xếp theo giờ làm thật. Điểm thưởng tính khi có việc giao qua văn phòng ảo — bấm tên để xem chi tiết.'
+    : 'Đăng nhập để xem giờ làm, token thật của từng người.';
 }
 lb.querySelector('.lb-ky').onclick = e => { const b = e.target.closest('[data-ky]'); if (b) { lbKy = b.dataset.ky; veLB(); } };
 lb.querySelector('.lb-luat').onclick = () => {

@@ -8,22 +8,22 @@
     "gd": { "ten": "Mr.Mon", "app": "Văn phòng ảo", "repo": "hh-vibecode/van-phong-ao" }
   },
   "tu_khoa": {
-    "mkt": ["doanh thu sale", "doanh so sale", "don dat hang", "master", "master data", "ho so khach", "daily task", "viec can lam", "gan sale",
+    "mkt": ["masa", "doanh thu sale", "doanh so sale", "don dat hang", "master", "master data", "ho so khach", "daily task", "viec can lam", "gan sale",
       "ma kh", "ma khach", "gop khach", "trung sdt", "mkt", "marketing", "quang cao", "ads", "ads/ds", "cpm", "ctr", "cpc", "chien dich",
       "meta", "facebook ads", "mess", "chi phi quang cao", "nguon khach", "khach online", "doi soat don", "doi soat kiot", "data hub",
       "datahub", "kiot raw", "pancake don", "the khach", "sale le", "sale si", "chot don si", "bao cao tong hop", "thuong hieu", "ban do tinh",
       "theo tinh", "so sanh thang", "bao cao mkt", "app chinh", "sales_users"],
-    "qc": ["cham diem", "cham lai", "ai cham", "cham hoi thoai", "hoi thoai", "tra loi sai", "tra loi thieu", "thieu y", "sai kien thuc", "miss", "bo sot khach",
+    "qc": ["quang le", "cham diem", "cham lai", "ai cham", "cham hoi thoai", "hoi thoai", "tra loi sai", "tra loi thieu", "thieu y", "sai kien thuc", "miss", "bo sot khach",
       "khong ai tra loi", "khong tra loi", "thoi gian phan hoi", "phan hoi cham", "tra loi muon", "faq", "product faq", "bao sai",
       "cham sai", "qc", "cskh", "cham soc khach", "chat luong", "tin nhan", "binh luan", "chi bot", "loi nen tang", "sai quy trinh",
       "dan ve tin nhan", "bang gia", "bao gia"],
-    "kt": ["phieu chi", "phieu thu", "duyet chi", "de nghi thanh toan", "thanh toan", "thu quy", "so quy", "so du", "tai khoan ngan hang",
+    "kt": ["katy", "phieu chi", "phieu thu", "duyet chi", "de nghi thanh toan", "thanh toan", "thu quy", "so quy", "so du", "tai khoan ngan hang",
       "kiem ket", "kiem ke", "tam ung", "hoan ung", "khoan vay", "lai vay", "vay ngan hang", "tra goc", "cong no", "phai thu", "phai tra", "den han", "hoa don vat", "hoa don dau vao",
       "hoa don dau ra", "thue", "misa", "meinvoice", "p&l", "lai lo", "dong tien", "khoa so", "khoa ky", "ngan sach", "hang ton", "ton kho",
       "dieu chuyen", "hach toan", "phan bo chi phi", "ke toan", "vietqr", "giam doc duyet", "can giai dap"],
     "test": ["test", "test lai", "test het", "tester", "kiem thu", "qa", "chay thu toan bo", "ra loi", "soat loi", "kiem tra loi", "thu het", "trang man hinh",
       "loi giao dien", "tran ngang", "dien thoai 390"],
-    "gd": ["van phong ao", "mr.mon", "giao viec", "nhan su", "usage", "nang luong", "han muc", "tat ca app"]
+    "gd": ["van phong ao", "mr.mon", "usage", "nang luong", "han muc", "tat ca app"]
   },
   "de_nham": [
     { "tu": ["doanh thu", "doanh so"], "loai_tru": ["doanh thu sale", "doanh so sale", "doanh thu thuan", "hoa don"],
