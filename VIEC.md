@@ -49,9 +49,12 @@
   sang phiên MKT, phiên đó chuyển lại). Điểm do MÁY tính từ nhật ký sự kiện (sau này bảng `vp_su_kien`, chỉ thêm); KHÔNG cộng theo giờ / token.
   Bảng tuần đặt lại 00:00 thứ Hai giờ VN. Luật điểm xem nút "Cách tính điểm" trên web (đã gửi anh qua phiên MKT).
 
+- Ai có link: XEM được nhân sự hoạt động thật + bảng xếp hạng (không đăng nhập). ĐĂNG NHẬP mới: giao việc, bảng việc, số trong các ô, chi tiết từng người (anh, 20/10/2026).
+- Phiên dùng tới 85% thì PHẢI đổi tài khoản Claude (TK1 <-> TK2) — áp cho máy chạy nhân sự (anh, 20/10/2026).
 - **ƯU TIÊN SỐ 1: KHÔNG dùng API tốn tiền thật, chỉ dùng tính năng trong gói** (anh nhắc lại 20/10/2026).
 
 ## 4. NHẬT KÝ
+- **20/10/2026** — Web v0.14 + vp-api: thêm `cong_khai` (không đăng nhập, chỉ trạng thái / công cụ / giờ + tổng token hôm nay, tuần — không model, không số phiên, không giờ hết lượt chi tiết). Web: chưa đăng nhập vẫn thấy bản đồ hoạt động thật + bảng xếp hạng; ô số, bảng việc, chi tiết, chat -> đăng nhập (bấm chat mở hộp đăng nhập rồi vào chat). Thử Edge chạy ngầm cả 2 chế độ: đúng, không lỗi JS. Lỗi bắt trước khi đẩy: biến phiên khai báo sau chỗ dùng lúc tải trang -> dời lên đầu.
 - **20/10/2026** — Web v0.13 (anh: bảng xếp hạng khó nhìn, "chưa nối máy chủ là sao"): bảng xếp hạng chưa có việc chấm điểm thì xếp theo GIỜ LÀM THẬT — số to = giờ, dưới = token, thanh so sánh, trạng thái Đang làm / Đang nghỉ, tab Tuần này / Hôm nay, bấm tên xem chi tiết thật (phiên, model, hoạt động cuối, hết lượt); có điểm thì quay lại xếp theo điểm. Sửa chữ "chưa nối máy chủ" thành đúng tình trạng: đã nối đăng nhập + usage; CHƯA có máy chạy nhân sự (cần token gói Claude — bước 5 kế hoạch). Phân việc: bỏ "giao việc" / "nhân sự" khỏi nhóm Mr.Mon (câu "giao việc đc chưa, thử cho kế toán..." trước bị hỏi lại thừa, nay giao Katy), thêm tên Katy / Masa / Quang Lê làm từ khoá. Va chạm: phiên MKT dùng chung cổng DevTools 9333 làm ảnh thử của em bị che mờ → phiên văn phòng ảo dùng cổng 9345.
 - **20/10/2026** — USAGE THẬT LÊN WEB (v0.12). Phiên MKT đăng ký tiền tố `vp_` / `vp-` (anh duyệt, commit b7a711c repo MKT). Đã tạo trên Supabase chung:
   bảng `vp_tai_khoan`, `vp_phien`, `vp_cau_hinh`, `vp_usage` (RLS bật, không policy, revoke anon/authenticated — thử khoá anon thật: đọc / ghi đều 401 / 42501)

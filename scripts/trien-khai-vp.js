@@ -56,6 +56,9 @@ const goi = async (body, origin = 'https://hh-vibecode.github.io') => {
   const guiDung = await goi({ viec: 'gui_usage', khoa: K.VP_KHOA_GUI, ds: [] });
   const xuat = await goi({ viec: 'dang_xuat', phien: dung.j.phien });
   const sauXuat = await goi({ viec: 'usage', phien: dung.j.phien });
+  const ck = await goi({ viec: 'cong_khai' });
+  const ckSach = ck.s === 200 && Array.isArray(ck.j.ds) && !JSON.stringify(ck.j).match(/model|tokDocCache|phien|"luc":\d+,"loai"/);
+  console.log('   công khai (không đăng nhập):', ck.s, ck.j.ds ? ck.j.ds.length + ' người' : '', ckSach ? '· chỉ phần tối thiểu' : '· CÓ TRƯỜNG THỪA');
   const anon = await fetch(`https://${REF}.supabase.co/rest/v1/vp_tai_khoan?select=ten`, { headers: { apikey: 'khong-co' } });
   console.log('5. thử: đăng nhập SAI', sai.s, '(cần 401) · ĐÚNG', dung.s, dung.j.phien ? '(có phiên)' : '(KHÔNG có phiên)',
     '· đọc usage không phiên', khongPhien.s, '(cần 401) · có phiên', coPhien.s, '· gửi khoá sai', guiSai.s, '(cần 401) · khoá đúng', guiDung.s,

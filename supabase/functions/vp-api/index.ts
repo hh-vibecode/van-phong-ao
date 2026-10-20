@@ -3,7 +3,8 @@
 //   {viec:'dang_nhap', ten, mk}        -> {phien, ten, het_han}   (mật khẩu so bằng BĂM có muối; sai -> 401 sau 1 giây)
 //   {viec:'kiem_phien', phien}         -> {ten}
 //   {viec:'dang_xuat', phien}          -> {ok}
-//   {viec:'usage', phien}              -> {ds:[{nguoi, so_lieu, cap_nhat}]}
+//   {viec:'usage', phien}              -> {ds:[{nguoi, so_lieu, cap_nhat}]}   (đầy đủ — cần đăng nhập)
+//   {viec:'cong_khai'}                 -> {ds:[...]}   (KHÔNG cần đăng nhập: trạng thái, công cụ đang dùng, giờ + tổng token hôm nay / tuần)
 //   {viec:'gui_usage', khoa, ds:[...]} -> {ok, so}   (máy anh gửi; khoá gửi so bằng BĂM — chỉ ghi được bảng vp_usage)
 const SB = Deno.env.get('SUPABASE_URL')!, SK = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const H = { apikey: SK, Authorization: 'Bearer ' + SK, 'Content-Type': 'application/json' };
@@ -64,6 +65,18 @@ Deno.serve(async req => {
     if (b.viec === 'usage') {
       await kiemPhien(b.phien);
       return tra({ ds: await rest('vp_usage?select=nguoi,so_lieu,cap_nhat') });
+    }
+    if (b.viec === 'cong_khai') {   // KHÔNG cần đăng nhập (anh 20/10/2026: ai có link cũng xem agent hoạt động + bảng xếp hạng) — chỉ phần tối thiểu
+      const ds = await rest('vp_usage?select=nguoi,so_lieu,cap_nhat'), now = Date.now();
+      const gon = (o: any) => o ? { ms: Number(o.ms) || 0, tok: (Number(o.tokVao) || 0) + (Number(o.tokRa) || 0) + (Number(o.tokGhiCache) || 0) } : null;
+      return tra({ ds: ds.filter((x: any) => ['gd', 'mkt', 'qc', 'kt', 'test'].includes(x.nguoi)).map((x: any) => {
+        const s = x.so_lieu || {};
+        return { nguoi: x.nguoi, cap_nhat: x.cap_nhat, so_lieu: {
+          cuoi: Number(s.cuoi) || 0,
+          congCu: s.congCu ? { ten: String(s.congCu.ten || '').slice(0, 40), luc: Number(s.congCu.luc) || 0 } : null,
+          hetLuot: s.hetLuot && s.hetLuot.moLai > now ? { moLai: Number(s.hetLuot.moLai) } : null,
+          ngay: gon(s.ngay), tuan: gon(s.tuan) } };
+      }) });
     }
     if (b.viec === 'gui_usage') {
       const ch = await rest('vp_cau_hinh?select=v&k=eq.khoa_gui_bam');

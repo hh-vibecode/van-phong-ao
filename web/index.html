@@ -216,14 +216,14 @@ body.chat-mo{padding-right:390px}
 <div class="wrap">
   <div class="top">
     <div class="title">Văn phòng ảo</div>
-    <span class="badge warn" id="tbNoi">Chưa đăng nhập — chưa thấy số thật</span>
+    <span class="badge warn" id="tbNoi">Đang xem công khai</span>
     <span class="badge" id="ver"></span>
     <button class="btn" id="theme" type="button">Đổi nền sáng / tối</button>
     <button class="btn" id="nutTT" type="button">Thông tin</button>
     <button class="btn pri" id="nutDN" type="button">Đăng nhập</button>
   </div>
 
-  <div class="note">Usage THẬT (giờ làm, token, đang làm / nghỉ, hết lượt) hiện sau khi anh đăng nhập — máy anh gửi lên mỗi phút, không gọi API. Giao việc qua chat vẫn chỉ nằm trên trình duyệt, chưa gửi tới nhân sự. Nút "giả lập" chỉ để xem hình động.</div>
+  <div class="note">Ai có link đều xem được nhân sự đang làm gì và bảng xếp hạng (số thật, cập nhật mỗi phút, không gọi API). Giao việc, bảng việc và số liệu chi tiết trong các ô cần đăng nhập. Nhân sự chưa có máy chạy tự động nên việc giao chưa được làm thật.</div>
 
   <div class="khung">
   <!-- Thanh trái: bảng xếp hạng nhân viên xuất sắc (anh Hải 20/10/2026) -->
@@ -338,7 +338,8 @@ body.chat-mo{padding-right:390px}
 </aside>
 
 <script>
-const APP_VERSION = 'v0.13 · 20/10/2026';
+const APP_VERSION = 'v0.14 · 20/10/2026';
+let PHIEN = null, USAGE = null, USAGE_LUC = 0, usageTimer = null;   // khai báo sớm: veBang / moPanel dùng ngay lúc tải trang
 document.getElementById('ver').textContent = APP_VERSION;
 document.getElementById('ttVer').textContent = APP_VERSION;
 const ttin = document.getElementById('ttin');
@@ -777,6 +778,7 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;'
 const VIEC = [];
 let soViec = 0;
 function veBang() {
+  if (!PHIEN) { document.getElementById('board').innerHTML = '<div class="empty">Đăng nhập để xem và giao việc.</div>'; return; }
   document.getElementById('board').innerHTML = TRANG_THAI.map(([k, ten]) => {
     const ds = VIEC.filter(v => v.tt === k);
     return `<div class="col"><h3>${esc(ten)}<span>${ds.length}</span></h3>` + (ds.length ? ds.map(v =>
@@ -820,7 +822,10 @@ function moChat(mo) {
   chatp.hidden = !mo; document.body.classList.toggle('chat-mo', mo);
   if (mo) { chuaDoc = 0; fabN.hidden = true; cpIn.focus(); cpM.scrollTop = cpM.scrollHeight; } else fab.focus();
 }
-fab.onclick = () => moChat(true);
+fab.onclick = () => {
+  if (PHIEN) { moChat(true); return; }
+  sauDangNhap = () => moChat(true); set('dnLoi', 'Đăng nhập để giao việc cho Mr.Mon.'); dnHop.showModal(); document.getElementById('dnTen').focus();
+};
 document.getElementById('cpClose').onclick = () => moChat(false);
 const gioNgan = () => new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Ho_Chi_Minh' });
 function themTin(ai, noiDung, acts) {
@@ -893,7 +898,6 @@ chuaDoc = 0; fabN.hidden = true;
 // Trang KHÔNG chứa khoá. Đăng nhập kiểm ở máy chủ; phiên lưu trong trình duyệt của anh. Usage do máy anh gửi lên mỗi phút
 // (scripts/gui-usage.js đọc nhật ký phiên Claude Code — không gọi API, không tốn tiền). Chưa đăng nhập: không thấy số nào.
 const API_VP = 'https://bcrpxfvvjsjpvbksqzls.supabase.co/functions/v1/vp-api';
-let PHIEN = null, USAGE = null, USAGE_LUC = 0, usageTimer = null;
 try { PHIEN = localStorage.getItem('vp_phien'); } catch (e) {}
 Object.assign(DONG_TU, { Glob: 'Đang tìm', PowerShell: 'Đang chạy lệnh', Agent: 'Đang giao việc phụ', WebSearch: 'Đang tra web',
   WebFetch: 'Đang đọc web', Skill: 'Đang dùng kỹ năng', TodoWrite: 'Đang lập việc', NotebookEdit: 'Đang sửa' });
@@ -903,7 +907,7 @@ async function goiVP(body) {
   if (!r.ok) { const e = new Error(j.loi || ('Lỗi máy chủ ' + r.status)); e.s = r.status; throw e; }
   return j;
 }
-const tokTong = o => o ? (o.tokVao || 0) + (o.tokRa || 0) + (o.tokGhiCache || 0) : 0;   // không tính đọc cache (rẻ, cộng riêng)
+const tokTong = o => o ? (o.tok != null ? o.tok : (o.tokVao || 0) + (o.tokRa || 0) + (o.tokGhiCache || 0)) : 0;   // không tính đọc cache (rẻ, cộng riêng)
 const truoc = ms => { const g = Math.max(0, Math.round((Date.now() - ms) / 1000)); return g < 60 ? g + ' giây trước' : g < 3600 ? Math.round(g / 60) + ' phút trước' : Math.round(g / 3600) + ' giờ trước'; };
 function apUsage() {
   const now = Date.now();
@@ -921,6 +925,13 @@ function apUsage() {
 }
 function panelThat(a) {
   const s = a.that, now = Date.now(), het = s.hetLuot && s.hetLuot.moLai > now;
+  if (!PHIEN) {   // công khai: chỉ trạng thái, số trong các ô cần đăng nhập
+    ['pJob', 'pNL', 'pPhien', 'pPhienReset', 'pTuan', 'pTuanReset', 'pPhan', 'pViecTuan', 'pGio', 'pTok', 'pModel'].forEach(id => set(id, '—'));
+    set('pJob', a.tt === 'lam' ? 'Đang làm việc' : '—'); document.getElementById('pNLbar').style.width = '0';
+    set('pNote', 'Đăng nhập để xem số liệu chi tiết của ' + a.ten + '.');
+    const lr0 = document.getElementById('pLinkRow'); lr0.hidden = !a.link; if (a.link) document.getElementById('pLink').href = a.link;
+    panel.hidden = false; return;
+  }
   const tongTuan = Object.values(USAGE || {}).reduce((t, x) => t + tokTong(x.tuan), 0);
   set('pJob', a.tt === 'lam' ? 'Phiên Claude Code đang chạy' : '—');
   set('pNL', het ? 'Hết lượt' : 'chưa có % gói');
@@ -941,6 +952,7 @@ function panelThat(a) {
   panel.hidden = false;
 }
 function kpiThat() {
+  if (!PHIEN) { set('kNLlbl', 'Usage tuần này — cả văn phòng'); set('kNL', '—'); set('kNLsub', 'Đăng nhập để xem'); return; }
   const ds = Object.values(USAGE), now = Date.now(), tong = ds.reduce((t, x) => t + tokTong(x.tuan), 0);
   const het = ds.map(x => x.hetLuot).filter(Boolean).sort((p, q) => q.luc - p.luc)[0];
   set('kNLlbl', 'Usage tuần này — cả văn phòng (số thật)');
@@ -949,9 +961,8 @@ function kpiThat() {
     + ' · cập nhật ' + truoc(USAGE_LUC));
 }
 async function layUsage() {
-  if (!PHIEN) return;
   try {
-    const j = await goiVP({ viec: 'usage', phien: PHIEN });
+    const j = await goiVP(PHIEN ? { viec: 'usage', phien: PHIEN } : { viec: 'cong_khai' });
     USAGE = {}; j.ds.forEach(x => { USAGE[x.nguoi] = x.so_lieu; });
     USAGE_LUC = Math.max(0, ...j.ds.map(x => Date.parse(x.cap_nhat)));
     apUsage(); veLB();
@@ -960,14 +971,19 @@ async function layUsage() {
 const nutDN = document.getElementById('nutDN'), dnHop = document.getElementById('dnHop');
 function nutDangNhap(ten) {
   nutDN.textContent = ten ? ten + ' · Đăng xuất' : 'Đăng nhập'; nutDN.classList.toggle('pri', !ten);
-  const tb = document.getElementById('tbNoi'); tb.textContent = ten ? 'Đã nối usage thật' : 'Chưa đăng nhập — chưa thấy số thật'; tb.className = 'badge' + (ten ? '' : ' warn');
+  const tb = document.getElementById('tbNoi'); tb.textContent = ten ? 'Đã đăng nhập' : 'Đang xem công khai'; tb.className = 'badge' + (ten ? '' : ' warn');
 }
-function batDauThat(ten) { nutDangNhap(ten); layUsage(); clearInterval(usageTimer); usageTimer = setInterval(layUsage, 30000); }
+function batDauThat(ten) { nutDangNhap(ten); layUsage(); moKhoa(true); }
+function moKhoa(dn) {   // đăng nhập: mở chat / bảng việc / số trong các ô
+  document.body.classList.toggle('da-dn', dn);
+  if (!dn && !chatp.hidden) moChat(false);
+  veBang(); if (dangXem) moPanel(dangXem);
+}
 function dangXuat(hetHan) {
-  const p = PHIEN; PHIEN = null; USAGE = null; clearInterval(usageTimer);
+  const p = PHIEN; PHIEN = null; USAGE = null;
   try { localStorage.removeItem('vp_phien'); } catch (e) {}
   if (p && !hetHan) goiVP({ viec: 'dang_xuat', phien: p }).catch(() => {});
-  nutDangNhap(null); apUsage(); veLB();
+  nutDangNhap(null); moKhoa(false); layUsage();
 }
 nutDN.onclick = () => {
   if (PHIEN) { if (confirm('Đăng xuất khỏi Văn phòng ảo?')) dangXuat(); return; }
@@ -981,9 +997,13 @@ document.getElementById('dnForm').onsubmit = async e => {
     const j = await goiVP({ viec: 'dang_nhap', ten: document.getElementById('dnTen').value, mk: document.getElementById('dnMk').value });
     PHIEN = j.phien; try { localStorage.setItem('vp_phien', PHIEN); } catch (er) {}
     document.getElementById('dnMk').value = ''; dnHop.close(); batDauThat(j.ten);
+    if (sauDangNhap) { const f = sauDangNhap; sauDangNhap = null; f(); }
   } catch (er) { set('dnLoi', er.message); } finally { nut.disabled = false; }
 };
 if (PHIEN) goiVP({ viec: 'kiem_phien', phien: PHIEN }).then(j => batDauThat(j.ten)).catch(er => { if (er.s === 401) dangXuat(true); });
+else layUsage();
+usageTimer = setInterval(layUsage, 30000);
+let sauDangNhap = null;   // việc cần làm tiếp sau khi đăng nhập (vd mở chat)
 
 /* ===================== BẢNG XẾP HẠNG NHÂN VIÊN XUẤT SẮC (thanh trái, cập nhật trực tiếp) ===================== */
 // Anh Hải 20/10/2026: "thanh bên trái, avatar + chỉ số nhân sự: làm được bao nhiêu tiếng, xử lý bao nhiêu việc, đốt bao nhiêu token —
@@ -1062,7 +1082,7 @@ function veLB() {
   const k = (kk, t) => `<button class="btn${lbKy === kk ? ' on' : ''}" type="button" data-ky="${kk}">${t}</button>`;
   lb.querySelector('.lb-ky').innerHTML = cheDo === 'diem' ? k('tuan', 'Tuần này') + k('thang', 'Tháng này') : k('tuan', 'Tuần này') + k('ngay', 'Hôm nay');
   const ng = lb.querySelector('.lb-nguon');
-  ng.textContent = cheDo === 'diem' ? (coGL ? 'Số giả lập' : 'Điểm') : cheDo === 'gio' ? 'Số thật · theo giờ làm' : 'Đăng nhập để xem';
+  ng.textContent = cheDo === 'diem' ? (coGL ? 'Số giả lập' : 'Điểm') : cheDo === 'gio' ? 'Số thật · theo giờ làm' : 'Đang tải';
   ng.className = 'badge lb-nguon' + (coGL || cheDo === 'trong' ? ' warn' : '');
 
   const tu = lbKy === 'thang' ? dauThangVN(now) : dauTuanVN(now);
@@ -1106,6 +1126,7 @@ function veLB() {
     const ct = r.querySelector('.lb-ct'); ct.hidden = lbMo !== a.id;
     if (lbMo !== a.id) return;
     const dong = (t, v) => `<div class="lb-cr"><span>${t}</span><b>${v}</b></div>`;
+    if (cheDo !== 'diem' && !PHIEN) { ct.innerHTML = '<div class="lb-cr"><span>Đăng nhập để xem chi tiết</span><b></b></div>'; return; }
     if (cheDo !== 'diem') {
       const t = a.that;
       ct.innerHTML = !t ? '<div class="lb-cr"><span>Chưa có phiên Claude Code nào của người này</span><b></b></div>'
@@ -1133,7 +1154,7 @@ function veLB() {
   lb.querySelector('.lb-xs').innerHTML = cheDo === 'diem'
     ? (tuanTruoc ? 'Nhân viên xuất sắc tuần trước: <b>' + esc(tuanTruoc.a.ten) + '</b> · ' + tuanTruoc.diem + ' điểm' : 'Nhân viên xuất sắc tuần trước: chưa có')
     : cheDo === 'gio' ? 'Đang xếp theo giờ làm thật. Điểm thưởng tính khi có việc giao qua văn phòng ảo — bấm tên để xem chi tiết.'
-    : 'Đăng nhập để xem giờ làm, token thật của từng người.';
+    : 'Đang tải số liệu…';
 }
 lb.querySelector('.lb-ky').onclick = e => { const b = e.target.closest('[data-ky]'); if (b) { lbKy = b.dataset.ky; veLB(); } };
 lb.querySelector('.lb-luat').onclick = () => {
