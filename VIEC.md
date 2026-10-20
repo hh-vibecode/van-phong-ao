@@ -46,6 +46,7 @@
   trang không có khoá; khoá ở GitHub Secrets. Khoá mật khẩu bằng JS trên trang tĩnh là vô dụng (code công khai) — không làm kiểu đó.
 
 ## 4. NHẬT KÝ
+- **20/10/2026** — Web v0.10: ẩn dòng ghi nguồn / giấy phép dưới bản đồ, chuyển vào nút "Thông tin" trên thanh đầu trang (file LICENSE MIT vẫn kèm trong trang như giấy phép yêu cầu).
 - **20/10/2026** — Web v0.9: chức danh TRÊN tên nhân vật, dạng "Agent …" (Agent Giám Đốc, Agent MKT/Sale, Agent QC CSKH, Agent Kế toán, Agent Kiểm Thử — đúng chữ anh đưa) theo lời anh.
 - **20/10/2026** — Web v0.6: khung chat Mr.Mon (nút góc, mở nằm bên phải 390px, văn phòng tự thu lại; điện thoại thì phủ toàn màn) — Mr.Mon phân việc theo `web/phan-viec.json` (thử 15 câu mẫu: chia đúng, câu dễ nhầm như "doanh thu", "Pancake bị lỗi", "cấp quyền" thì hỏi lại kèm nút chọn); anh bấm "Giao …" thì việc chuyển cột trên Bảng việc (chỉ trong trình duyệt, chưa gửi). Ô trạng thái kiểu Claude Code cạnh đầu (động từ + công cụ + file, thời gian, token), thanh năng lượng dưới tên, bảng thông tin đủ: năng lượng, phiên 5 giờ, tuần, còn mấy ngày đặt lại, phần usage của người đó, số việc tuần, model. Mr.Mon đi đôn đốc / động viên, ghi báo vào chat. Số liệu năng lượng / phiên hiện là GIẢ LẬP (nút giả lập) — chưa có nguồn usage thật.
 - **20/10/2026** — Đã dừng giữa chừng agent đọc toàn bộ tài liệu 3 app (anh bảo tốn token) — không dùng kết quả; soạn `PHAN-VIEC.md` gọn từ BRIEF mục 3.

@@ -109,7 +109,13 @@ h2{font-size:14px;font-weight:800;margin:0}
 .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;color:var(--muted);font-size:11px;font-weight:600}
 .legend span{display:inline-flex;align-items:center;gap:5px}
 .legend i{width:8px;height:8px;border-radius:50%;display:inline-block}
-.credit{margin-top:6px;color:var(--muted);font-size:10.5px}
+.ttin{border:1px solid var(--border);border-radius:12px;padding:0;width:440px;max-width:calc(100% - 32px);background:var(--surface);color:var(--text)}
+.ttin::backdrop{background:rgba(0,0,0,.35)}
+.tt-b{padding:8px 14px 14px}
+.tt-r{display:flex;justify-content:space-between;gap:12px;font-size:12px;padding:6px 0;border-top:1px solid var(--border)}
+.tt-r:first-child{border-top:0}
+.tt-r span{color:var(--muted)}
+.tt-r b{text-align:right}
 .loi{color:#fca5a5;padding:30px;font-weight:600}
 
 /* Bảng việc + chat */
@@ -169,6 +175,7 @@ body.chat-mo{padding-right:390px}
     <span class="badge warn">Bản giao diện — chưa nối dữ liệu</span>
     <span class="badge" id="ver"></span>
     <button class="btn" id="theme" type="button">Đổi nền sáng / tối</button>
+    <button class="btn" id="nutTT" type="button">Thông tin</button>
   </div>
 
   <div class="note">Bản thử: chưa nối máy chủ. Chat với Mr.Mon (nút góc phải dưới) đã thử được phân việc, nhưng việc chỉ nằm trên trình duyệt của người đang xem — chưa gửi tới nhân sự, không ai sửa được app nào qua trang này. Nút "giả lập" chỉ để xem hình động, không phải số thật.</div>
@@ -216,10 +223,6 @@ body.chat-mo{padding-right:390px}
       <span><i style="background:#22c55e"></i>Xong việc</span>
       <span>Bấm vào tên nhân vật để xem chi tiết</span>
     </div>
-    <div class="credit">Hình nhân vật, đồ đạc, sàn, tường: <a href="https://github.com/pixel-agents-hq/pixel-agents" target="_blank" rel="noopener noreferrer">Pixel Agents</a>
-      (giấy phép <a href="assets/pa/LICENSE-pixel-agents.txt" target="_blank">MIT</a>, © 2026 Pablo De Lucca), nhân vật dựa trên bộ
-      <a href="https://jik-a-4.itch.io/metrocity-free-topdown-character-pack" target="_blank" rel="noopener noreferrer">Metro City của JIK-A-4</a>.
-      Logic giao việc, chỗ ngồi, trạng thái: Văn phòng ảo.</div>
   </div>
 
   <div class="card" style="margin-top:14px">
@@ -229,6 +232,18 @@ body.chat-mo{padding-right:390px}
 
   <div class="foot"><span>Văn phòng ảo · Giám đốc Mr.Mon · Masa · Quang Lê · Katy · Tester</span><span>Mr.Mon</span></div>
 </div>
+
+<dialog class="ttin" id="ttin" aria-label="Thông tin">
+  <div class="cp-h"><div class="cp-t">Thông tin</div><button class="btn" id="ttDong" type="button">Đóng</button></div>
+  <div class="tt-b">
+    <div class="tt-r"><span>Phiên bản</span><b id="ttVer"></b></div>
+    <div class="tt-r"><span>Hình nhân vật, đồ đạc, sàn, tường</span><b><a href="https://github.com/pixel-agents-hq/pixel-agents" target="_blank" rel="noopener noreferrer">Pixel Agents</a></b></div>
+    <div class="tt-r"><span>Giấy phép</span><b><a href="assets/pa/LICENSE-pixel-agents.txt" target="_blank">MIT</a>, © 2026 Pablo De Lucca</b></div>
+    <div class="tt-r"><span>Nhân vật dựa trên</span><b><a href="https://jik-a-4.itch.io/metrocity-free-topdown-character-pack" target="_blank" rel="noopener noreferrer">Metro City — JIK-A-4</a></b></div>
+    <div class="tt-r"><span>Logic giao việc, chỗ ngồi, trạng thái</span><b>Văn phòng ảo</b></div>
+    <div class="tt-r"><span>Bảo mật</span><b>Trang không chứa khoá; chưa nối máy chủ</b></div>
+  </div>
+</dialog>
 
 <!-- Khung chat kiểu Claude trong VS Code: nút ở góc, mở ra nằm gọn bên phải, văn phòng tự thu lại không bị che -->
 <button class="fab" id="fab" type="button" aria-label="Mở khung chat với Mr.Mon">
@@ -248,8 +263,13 @@ body.chat-mo{padding-right:390px}
 </aside>
 
 <script>
-const APP_VERSION = 'v0.9 · 20/10/2026';
+const APP_VERSION = 'v0.10 · 20/10/2026';
 document.getElementById('ver').textContent = APP_VERSION;
+document.getElementById('ttVer').textContent = APP_VERSION;
+const ttin = document.getElementById('ttin');
+document.getElementById('nutTT').onclick = () => ttin.showModal();
+document.getElementById('ttDong').onclick = () => ttin.close();
+ttin.addEventListener('click', e => { if (e.target === ttin) ttin.close(); });
 
 /* ===================== Danh mục đồ đạc (theo manifest của Pixel Agents) ===================== */
 const T = 16, A = 'assets/pa/';
