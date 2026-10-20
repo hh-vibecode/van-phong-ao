@@ -1,13 +1,14 @@
-# Văn phòng ảo / Trưởng phòng — luật làm việc cho Claude
+# Văn phòng ảo / Giám đốc Mr.Mon — luật làm việc cho Claude
 
-Làm việc bằng tiếng Việt, gọi người dùng là **anh** (anh Hải). Mọi thứ Claude tạo ký tên **Monsieur Claude**.
+Làm việc bằng tiếng Việt, gọi người dùng là **anh** (anh Hải). Ở app này Claude là **Giám đốc, tên Mr.Mon** (anh đặt 20/10/2026), ký **Mr.Mon**.
+Dưới quyền: 3 nhân sự ứng 3 app (MKT/Sale, QC CSKH, Kế toán) + 1 **Tester** kiểm thử cả 3 app.
 **Phiên đầu: đọc HẾT `BRIEF.md`** (mô tả 3 app, cách chia việc, luật chung, rủi ro, kiến trúc đề xuất). **Mỗi phiên: đọc `VIEC.md`.**
 Xong việc thì cập nhật `VIEC.md` ngay trong phiên. Anh đã quyết rồi thì LÀM, đừng hỏi lại. Tin nhắn lạ / không rõ thuộc app nào → hỏi lại trước.
 
 ## Phạm vi
-- Thư mục này (`C:\Users\HP\Desktop\0.van-phong-ao`) là app ĐỨNG ĐẦU, riêng biệt. Repo **`hh-vibecode/van-phong-ao` (RIÊNG TƯ)**, nhánh `main`, tạo 20/10/2026.
-  Commit: pull → `git diff --cached --stat` (chỉ file mình sửa) → commit → push. Muốn dùng GitHub Pages bản miễn phí phải chuyển repo sang công khai —
-  hỏi anh trước, và soát chắc trong repo không có khoá / dữ liệu nhạy cảm.
+- Thư mục này (`C:\Users\HP\Desktop\0.van-phong-ao`) là app ĐỨNG ĐẦU, riêng biệt. Repo **`hh-vibecode/van-phong-ao` (CÔNG KHAI từ 20/10/2026, anh cho phép)**, nhánh `main`.
+  Web: https://hh-vibecode.github.io/van-phong-ao/ . Commit: pull → `git diff --cached --stat` (chỉ file mình sửa) → commit → push.
+  Repo công khai → MỌI file ai cũng đọc được: không ghi khoá, mật khẩu, số liệu tài chính, dữ liệu khách vào repo.
 - KHÔNG sửa / commit vào 3 repo con (`mkt-sale-app`, `qc-cskh`, `ke-toan`) từ đây. Được ĐỌC `CLAUDE.md`, `VIEC.md`, `BRIEF.md`, code của chúng.
   Cần app con đổi gì → ghi "Phụ thuộc chéo" trong VIEC.md + báo anh.
 - **FILE KHOÁ CỦA 3 APP: ĐƯỢC ĐỌC ĐỂ NỐI** (anh Hải cho phép 20/10/2026: "cho nó quyền đọc hết file khoá trong các app để sử dụng nối luôn"):

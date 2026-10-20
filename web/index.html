@@ -11,29 +11,29 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&subset=vietnamese&display=swap" rel="stylesheet">
 <!--
-  Văn phòng ảo — Trưởng phòng điều phối 3 nhân sự (MKT/Sale, QC CSKH, Kế toán).
+  Văn phòng ảo — Giám đốc Mr.Mon điều phối 3 nhân sự (MKT/Sale, QC CSKH, Kế toán) + Tester.
   BẢO MẬT: trang này KHÔNG chứa khoá / token / mật khẩu nào. Mọi khoá chỉ nằm ở phía máy chạy agent (GitHub Secrets).
-  Bản 20/10/2026: chỉ là giao diện, CHƯA nối dữ liệu, CHƯA nhận lệnh. Monsieur Claude.
+  Bản 20/10/2026: chỉ là giao diện, CHƯA nối dữ liệu, CHƯA nhận lệnh. Mr.Mon.
 -->
 <style>
 :root{
   --bg:#f5f6f8;--surface:#fff;--bg2:#f1f3f6;--border:#e3e6eb;--text:#111827;--text2:#374151;--muted:#6b7280;
   --accent:#4f46e5;--accent-fg:#fff;--floor:#eef0f4;--wall:#cfd4dc;--desk:#e7e1d6;
   --ok:#15803d;--ok-bg:#dcfce7;--warn:#b45309;--warn-bg:#fef3c7;--bad:#be123c;--bad-bg:#ffe4e6;--grey:#4b5563;--grey-bg:#e5e7eb;
-  --c-tp:#4f46e5;--c-mkt:#2563eb;--c-qc:#12b76a;--c-kt:#d97706;
+  --c-tp:#4f46e5;--c-test:#db2777;--c-mkt:#2563eb;--c-qc:#12b76a;--c-kt:#d97706;
   --font:'Montserrat',system-ui,-apple-system,'Segoe UI',sans-serif;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#0f1115;--surface:#171a21;--bg2:#1e222b;--border:#2b303b;--text:#e5e7eb;--text2:#cbd5e1;--muted:#8b93a3;
   --accent:#818cf8;--accent-fg:#0b1220;--floor:#141821;--wall:#323846;--desk:#3a352c;
   --ok:#4ade80;--ok-bg:#12301f;--warn:#fbbf24;--warn-bg:#352812;--bad:#fb7185;--bad-bg:#3a1520;--grey:#cbd5e1;--grey-bg:#2b303b;
-  --c-tp:#818cf8;--c-mkt:#60a5fa;--c-qc:#4ade80;--c-kt:#fbbf24;
+  --c-tp:#818cf8;--c-test:#f472b6;--c-mkt:#60a5fa;--c-qc:#4ade80;--c-kt:#fbbf24;
 }}
 :root[data-theme="dark"]{
   --bg:#0f1115;--surface:#171a21;--bg2:#1e222b;--border:#2b303b;--text:#e5e7eb;--text2:#cbd5e1;--muted:#8b93a3;
   --accent:#818cf8;--accent-fg:#0b1220;--floor:#141821;--wall:#323846;--desk:#3a352c;
   --ok:#4ade80;--ok-bg:#12301f;--warn:#fbbf24;--warn-bg:#352812;--bad:#fb7185;--bad-bg:#3a1520;--grey:#cbd5e1;--grey-bg:#2b303b;
-  --c-tp:#818cf8;--c-mkt:#60a5fa;--c-qc:#4ade80;--c-kt:#fbbf24;
+  --c-tp:#818cf8;--c-test:#f472b6;--c-mkt:#60a5fa;--c-qc:#4ade80;--c-kt:#fbbf24;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:13px;line-height:1.5}
@@ -121,26 +121,27 @@ h2{font-size:14px;font-weight:800;margin:0 0 10px}
       <div class="board" id="board"></div>
     </div>
     <div class="card chat">
-      <h2>Giao việc cho Trưởng phòng</h2>
-      <div class="msgs">Chưa có tin nhắn. Khi mở, Trưởng phòng sẽ đề xuất giao cho ai — anh bấm xác nhận rồi nhân sự mới làm.</div>
+      <h2>Giao việc cho Giám đốc Mr.Mon</h2>
+      <div class="msgs">Chưa có tin nhắn. Khi mở, Mr.Mon sẽ đề xuất giao cho ai — anh bấm xác nhận rồi nhân sự mới làm.</div>
       <textarea disabled placeholder="Chưa mở — cần đăng nhập"></textarea>
       <button class="btn" type="button" disabled>Gửi</button>
     </div>
   </div>
 
-  <div class="foot"><span>Văn phòng ảo · Trưởng phòng điều phối 3 nhân sự</span><span>Monsieur Claude</span></div>
+  <div class="foot"><span>Văn phòng ảo · Giám đốc Mr.Mon · 3 nhân sự + Tester</span><span>Mr.Mon</span></div>
 </div>
 
 <script>
-const APP_VERSION = 'v0.1 · 20/10/2026';
+const APP_VERSION = 'v0.2 · 20/10/2026';
 document.getElementById('ver').textContent = APP_VERSION;
 
 // Nhân sự: chỉ thông tin công khai (tên phòng + link trang live đã công khai). Không khoá, không dữ liệu nội bộ.
 const NHAN_SU = [
-  { id: 'tp', ten: 'Trưởng phòng', vai: 'Nhận việc của anh, đề xuất giao cho ai', mau: '--c-tp', boss: true },
+  { id: 'gd', ten: 'Mr.Mon — Giám đốc', vai: 'Nhận việc của anh, chia cho nhân sự, soát kết quả', mau: '--c-tp', boss: true },
   { id: 'mkt', ten: 'Nhân sự MKT / Sale', vai: 'Báo cáo Marketing & Sale', mau: '--c-mkt', link: 'https://hh-vibecode.github.io/mkt-sale-app/' },
   { id: 'qc', ten: 'Nhân sự QC CSKH', vai: 'Chất lượng chăm sóc khách', mau: '--c-qc', link: 'https://hh-vibecode.github.io/qc-cskh/' },
   { id: 'kt', ten: 'Nhân sự Kế toán', vai: 'Tài chính – Kế toán', mau: '--c-kt', link: 'https://hh-vibecode.github.io/ke-toan/' },
+  { id: 'test', ten: 'Tester', vai: 'Kiểm thử cả 3 app, báo lỗi về đúng nhân sự', mau: '--c-test', boss: true },
 ];
 const TRANG_THAI = [
   ['moi', 'Mới'], ['cho_xac_nhan', 'Chờ anh xác nhận giao'], ['dang_lam', 'Đang làm'],
@@ -164,7 +165,7 @@ const phong = n => `<div class="room${n.boss ? ' boss' : ''}">
   </div></div>`;
 
 const floor = document.getElementById('floor');
-floor.innerHTML = phong(NHAN_SU[0]) + `<div class="rooms">${NHAN_SU.slice(1).map(phong).join('')}</div>`;
+floor.innerHTML = phong(NHAN_SU[0]) + `<div class="rooms">${NHAN_SU.slice(1, 4).map(phong).join('')}</div>` + phong(NHAN_SU[4]);
 document.getElementById('board').innerHTML = TRANG_THAI.map(([, ten]) =>
   `<div class="col"><h3>${esc(ten)}<span>0</span></h3><div class="empty">Trống</div></div>`).join('');
 

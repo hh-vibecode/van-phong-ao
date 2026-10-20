@@ -1,4 +1,4 @@
-# BRIEF — Văn phòng ảo & "Trưởng phòng" điều phối 3 app
+# BRIEF — Văn phòng ảo & Giám đốc Mr.Mon điều phối 3 app + Tester
 
 > Soạn 20/10/2026 bởi Monsieur Claude (phiên app MKT/Sale), theo yêu cầu anh Hải: "tạo hộ tóm tắt mô tả 3 app và các brief cần thiết
 > để tạo trưởng phòng". Đọc HẾT file này ở phiên đầu. Số liệu / lịch chạy ghi theo trạng thái 19–20/10/2026 — khi cần chính xác,
