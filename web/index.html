@@ -149,6 +149,9 @@ h2{font-size:14px;font-weight:800;margin:0}
 .legend i{width:8px;height:8px;border-radius:50%;display:inline-block}
 .ttin{border:1px solid var(--border);border-radius:12px;padding:0;width:440px;max-width:calc(100% - 32px);background:var(--surface);color:var(--text)}
 .ttin::backdrop{background:rgba(0,0,0,.35)}
+.nhac{display:inline-flex;align-items:center;gap:6px}
+.nhac #nhacBat{max-width:230px;overflow:hidden;text-overflow:ellipsis}
+.nhac input[type=range]{width:70px;accent-color:var(--accent)}
 .dn-f{display:flex;flex-direction:column;gap:10px}
 .dn-f label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:700;color:var(--text2)}
 .dn-f input{padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);font-size:13px;outline:none}
@@ -219,6 +222,11 @@ body.chat-mo{padding-right:390px}
     <span class="badge warn" id="tbNoi">Đang xem công khai</span>
     <span class="badge" id="ver"></span>
     <button class="btn" id="theme" type="button">Đổi nền sáng / tối</button>
+    <span class="nhac">
+      <button class="btn" id="nhacBat" type="button" aria-pressed="false">Nhạc lofi: tắt</button>
+      <button class="btn" id="nhacTiep" type="button" hidden>Bài tiếp</button>
+      <input type="range" id="nhacAm" min="0" max="100" value="35" hidden aria-label="Âm lượng nhạc nền">
+    </span>
     <button class="btn" id="nutTT" type="button">Thông tin</button>
     <button class="btn pri" id="nutDN" type="button">Đăng nhập</button>
   </div>
@@ -316,6 +324,7 @@ body.chat-mo{padding-right:390px}
     <div class="tt-r"><span>Giấy phép</span><b><a href="assets/pa/LICENSE-pixel-agents.txt" target="_blank">MIT</a>, © 2026 Pablo De Lucca</b></div>
     <div class="tt-r"><span>Nhân vật dựa trên</span><b><a href="https://jik-a-4.itch.io/metrocity-free-topdown-character-pack" target="_blank" rel="noopener noreferrer">Metro City — JIK-A-4</a></b></div>
     <div class="tt-r"><span>Logic giao việc, chỗ ngồi, trạng thái</span><b>Văn phòng ảo</b></div>
+    <div class="tt-r"><span>Nhạc nền lofi</span><b><a href="https://holiznacc0.bandcamp.com" target="_blank" rel="noopener noreferrer">Holizna</a>, giấy phép <a href="assets/nhac/NGUON.txt" target="_blank">CC0</a> (không bản quyền)</b></div>
     <div class="tt-r"><span>Bảo mật</span><b>Trang không chứa khoá; đăng nhập kiểm ở máy chủ</b></div>
   </div>
 </dialog>
@@ -338,7 +347,7 @@ body.chat-mo{padding-right:390px}
 </aside>
 
 <script>
-const APP_VERSION = 'v0.14 · 20/10/2026';
+const APP_VERSION = 'v0.15 · 20/10/2026';
 let PHIEN = null, USAGE = null, USAGE_LUC = 0, usageTimer = null;   // khai báo sớm: veBang / moPanel dùng ngay lúc tải trang
 document.getElementById('ver').textContent = APP_VERSION;
 document.getElementById('ttVer').textContent = APP_VERSION;
@@ -1202,6 +1211,49 @@ function skGiaLap() {   // gọi mỗi lượt giả lập (12 giây)
   if (rr() < 0.5) ghiSK('gd', 'giao_dung', { gl: 1 });
   veLB();
 }
+
+/* ===================== Nhạc nền lofi (Holizna, CC0 — không bản quyền), phát ngẫu nhiên ===================== */
+const NHAC = [['city-in-the-rearview', 'City In The Rearview'], ['families', 'Families'], ['opinions', 'Opinions'], ['autumn', 'Autumn'],
+  ['poor-but-happy', 'Poor But Happy'], ['blue-skies', 'Blue Skies'], ['puppy-love', 'Puppy Love'], ['new-shoes', 'New Shoes'],
+  ['happy-but-a-little-off', 'Happy But A Little Off']];
+const amThanh = new Audio(), nhacBat = document.getElementById('nhacBat'), nhacTiep = document.getElementById('nhacTiep'), nhacAm = document.getElementById('nhacAm');
+amThanh.preload = 'none';
+let hangNhac = [], baiCuoi = -1, nhacMo = false;
+const nho = (k, v) => { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } };
+function xaoNhac() {   // trộn ngẫu nhiên, không lặp bài cho tới hết vòng, không trùng bài vừa nghe
+  hangNhac = NHAC.map((_, i) => i);
+  for (let i = hangNhac.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [hangNhac[i], hangNhac[j]] = [hangNhac[j], hangNhac[i]]; }
+  if (hangNhac[0] === baiCuoi && hangNhac.length > 1) hangNhac.push(hangNhac.shift());
+}
+function phatBaiTiep() {
+  if (!hangNhac.length) xaoNhac();
+  baiCuoi = hangNhac.shift();
+  amThanh.src = 'assets/nhac/' + NHAC[baiCuoi][0] + '.mp3';
+  amThanh.play().catch(() => {});
+  veNutNhac();
+}
+function veNutNhac() {
+  nhacBat.textContent = nhacMo ? 'Nhạc: ' + (baiCuoi >= 0 ? NHAC[baiCuoi][1] : '…') : 'Nhạc lofi: tắt';
+  nhacBat.classList.toggle('on', nhacMo); nhacBat.setAttribute('aria-pressed', nhacMo);
+  nhacBat.title = nhacMo ? 'Bấm để tắt nhạc' : 'Bấm để bật nhạc lofi (phát ngẫu nhiên)';
+  nhacTiep.hidden = !nhacMo; nhacAm.hidden = !nhacMo;
+}
+function batNhac(mo) {
+  nhacMo = mo; nho('vp_nhac', mo ? '1' : '0');
+  if (!mo) amThanh.pause(); else if (!amThanh.src) phatBaiTiep(); else amThanh.play().catch(() => {});
+  veNutNhac();
+}
+amThanh.addEventListener('ended', phatBaiTiep);
+amThanh.addEventListener('error', () => { if (nhacMo) setTimeout(phatBaiTiep, 1500); });   // bài lỗi -> sang bài khác
+nhacBat.onclick = () => batNhac(!nhacMo);
+nhacTiep.onclick = phatBaiTiep;
+nhacAm.value = nho('vp_nhac_am') || 35; amThanh.volume = nhacAm.value / 100;
+nhacAm.oninput = () => { amThanh.volume = nhacAm.value / 100; nho('vp_nhac_am', nhacAm.value); };
+if (nho('vp_nhac') === '1') {   // lần trước để bật: trình duyệt chặn tự phát -> chạy từ cú bấm đầu tiên
+  nhacMo = true; veNutNhac();
+  const batDauNghe = e => { if (e.target === nhacBat) return; document.removeEventListener('pointerdown', batDauNghe); if (nhacMo && amThanh.paused) phatBaiTiep(); };
+  document.addEventListener('pointerdown', batDauNghe);
+} else veNutNhac();
 
 // Nền sáng / tối (chỉ lưu lựa chọn trên máy người xem)
 const root = document.documentElement;
