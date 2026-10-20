@@ -1,0 +1,44 @@
+{
+  "ghi_chu": "Bảng phân việc của Mr.Mon: từ khoá -> app. Chỉ để PHÂN BIỆT việc, không phải kiến thức app. Nguồn: BRIEF.md mục 3. Sửa ở đây, PHAN-VIEC.md giải thích luật. Mr.Mon 20/10/2026.",
+  "app": {
+    "mkt": { "ten": "Masa", "app": "MKT / Sale", "repo": "hh-vibecode/mkt-sale-app" },
+    "qc": { "ten": "Quang Lê", "app": "QC CSKH", "repo": "hh-vibecode/qc-cskh" },
+    "kt": { "ten": "Katy", "app": "Kế toán", "repo": "hh-vibecode/ke-toan" },
+    "test": { "ten": "Tester", "app": "Kiểm thử 3 app", "repo": "" },
+    "gd": { "ten": "Mr.Mon", "app": "Văn phòng ảo", "repo": "hh-vibecode/van-phong-ao" }
+  },
+  "tu_khoa": {
+    "mkt": ["doanh thu sale", "doanh so sale", "don dat hang", "master", "master data", "ho so khach", "daily task", "viec can lam", "gan sale",
+      "ma kh", "ma khach", "gop khach", "trung sdt", "mkt", "marketing", "quang cao", "ads", "ads/ds", "cpm", "ctr", "cpc", "chien dich",
+      "meta", "facebook ads", "mess", "chi phi quang cao", "nguon khach", "khach online", "doi soat don", "doi soat kiot", "data hub",
+      "datahub", "kiot raw", "pancake don", "the khach", "sale le", "sale si", "chot don si", "bao cao tong hop", "thuong hieu", "ban do tinh",
+      "theo tinh", "so sanh thang", "bao cao mkt", "app chinh", "sales_users"],
+    "qc": ["cham diem", "cham lai", "ai cham", "cham hoi thoai", "hoi thoai", "tra loi sai", "tra loi thieu", "thieu y", "sai kien thuc", "miss", "bo sot khach",
+      "khong ai tra loi", "khong tra loi", "thoi gian phan hoi", "phan hoi cham", "tra loi muon", "faq", "product faq", "bao sai",
+      "cham sai", "qc", "cskh", "cham soc khach", "chat luong", "tin nhan", "binh luan", "chi bot", "loi nen tang", "sai quy trinh",
+      "dan ve tin nhan", "bang gia", "bao gia"],
+    "kt": ["phieu chi", "phieu thu", "duyet chi", "de nghi thanh toan", "thanh toan", "thu quy", "so quy", "so du", "tai khoan ngan hang",
+      "kiem ket", "kiem ke", "tam ung", "hoan ung", "khoan vay", "lai vay", "vay ngan hang", "tra goc", "cong no", "phai thu", "phai tra", "den han", "hoa don vat", "hoa don dau vao",
+      "hoa don dau ra", "thue", "misa", "meinvoice", "p&l", "lai lo", "dong tien", "khoa so", "khoa ky", "ngan sach", "hang ton", "ton kho",
+      "dieu chuyen", "hach toan", "phan bo chi phi", "ke toan", "vietqr", "giam doc duyet", "can giai dap"],
+    "test": ["test", "test lai", "test het", "tester", "kiem thu", "qa", "chay thu toan bo", "ra loi", "soat loi", "kiem tra loi", "thu het", "trang man hinh",
+      "loi giao dien", "tran ngang", "dien thoai 390"],
+    "gd": ["van phong ao", "mr.mon", "giao viec", "nhan su", "usage", "nang luong", "han muc", "tat ca app"]
+  },
+  "de_nham": [
+    { "tu": ["doanh thu", "doanh so"], "loai_tru": ["doanh thu sale", "doanh so sale", "doanh thu thuan", "hoa don"],
+      "hoi": "Doanh thu theo Sale (đơn đặt hàng — Masa) hay theo Kế toán (hoá đơn thuần — Katy)? Hai số khác nhau có chủ đích.", "chon": ["mkt", "kt"] },
+    { "tu": ["pancake"], "loai_tru": ["pancake don", "the khach"],
+      "hoi": "Pancake phần đơn / thẻ khách (Masa) hay phần tin nhắn / chấm trả lời (Quang Lê)?", "chon": ["mkt", "qc"] },
+    { "tu": ["kiot", "kiotviet"], "loai_tru": ["doi soat kiot", "kiot raw"],
+      "hoi": "Kiot phần đơn / khách cho báo cáo Sale (Masa) hay phần thu chi / công nợ / hoá đơn (Katy)?", "chon": ["mkt", "kt"] },
+    { "tu": ["phan quyen", "dang nhap", "tai khoan", "mat khau", "cap quyen"], "loai_tru": ["tai khoan ngan hang", "sales_users"],
+      "hoi": "Mỗi app có đăng nhập / phân quyền riêng — anh nói app nào: MKT/Sale, QC hay Kế toán?", "chon": ["mkt", "qc", "kt"] },
+    { "tu": ["chi phi"], "loai_tru": ["chi phi quang cao", "phan bo chi phi"],
+      "hoi": "Chi phí quảng cáo (Masa) hay chi phí hạch toán / phiếu chi (Katy)?", "chon": ["mkt", "kt"] },
+    { "tu": ["khach"], "loai_tru": ["ho so khach", "ma khach", "gop khach", "khach online", "bo sot khach", "cham soc khach", "the khach", "nguon khach"],
+      "hoi": "Việc về khách: hồ sơ / Master / gán Sale (Masa), khách nhắn không được trả lời (Quang Lê), hay công nợ khách (Katy)?", "chon": ["mkt", "qc", "kt"] },
+    { "tu": ["sua loi", "bi loi", "gap loi", "loi app", "bao loi", "bug"], "loai_tru": ["loi giao dien", "loi nen tang", "ra loi", "soat loi", "kiem tra loi"],
+      "hoi": "Lỗi ở app nào? Hay anh muốn Tester rà lỗi cả 3 app trước?", "chon": ["mkt", "qc", "kt", "test"] }
+  ]
+}

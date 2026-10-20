@@ -38,7 +38,16 @@
 - Văn phòng 1 phòng chung: 4 nhân sự ngồi bàn giữa phòng, Mr.Mon ngồi ghế đối diện (anh, 20/10/2026).
 - Tên nhân sự (anh, 20/10/2026): Masa = MKT/Sale, Quang Lê = QC CSKH (anh viết "QC Sale"), Katy = Kế toán, Tester = Tester.
 
+- Mr.Mon chỉ PHÂN BIỆT việc thuộc app nào (`PHAN-VIEC.md` + `web/phan-viec.json`), không đọc hết kiến thức app — tốn token (anh, 20/10/2026).
+- Mr.Mon thỉnh thoảng đi kiểm tra: việc quá lâu thì nhắc, ai chờ anh thì báo anh, còn lại động viên (anh, 20/10/2026).
+- Mỗi nhân sự phải có đủ thông tin: năng lượng (usage còn lại), phiên 5 giờ, usage tuần, còn bao nhiêu ngày tới lúc đặt lại hạn mức tuần,
+  ô trạng thái kiểu phiên Claude Code cạnh đầu khi đang xử lý; khung chat kiểu Claude trong VS Code ở 1 bên, không che văn phòng (anh, 20/10/2026).
+- BẢO MẬT khi nối thật: người ngoài có link KHÔNG được giao việc / sửa gì → đăng nhập kiểm ở MÁY CHỦ (Edge Function `vp-*` + mã của anh băm),
+  trang không có khoá; khoá ở GitHub Secrets. Khoá mật khẩu bằng JS trên trang tĩnh là vô dụng (code công khai) — không làm kiểu đó.
+
 ## 4. NHẬT KÝ
+- **20/10/2026** — Web v0.6: khung chat Mr.Mon (nút góc, mở nằm bên phải 390px, văn phòng tự thu lại; điện thoại thì phủ toàn màn) — Mr.Mon phân việc theo `web/phan-viec.json` (thử 15 câu mẫu: chia đúng, câu dễ nhầm như "doanh thu", "Pancake bị lỗi", "cấp quyền" thì hỏi lại kèm nút chọn); anh bấm "Giao …" thì việc chuyển cột trên Bảng việc (chỉ trong trình duyệt, chưa gửi). Ô trạng thái kiểu Claude Code cạnh đầu (động từ + công cụ + file, thời gian, token), thanh năng lượng dưới tên, bảng thông tin đủ: năng lượng, phiên 5 giờ, tuần, còn mấy ngày đặt lại, phần usage của người đó, số việc tuần, model. Mr.Mon đi đôn đốc / động viên, ghi báo vào chat. Số liệu năng lượng / phiên hiện là GIẢ LẬP (nút giả lập) — chưa có nguồn usage thật.
+- **20/10/2026** — Đã dừng giữa chừng agent đọc toàn bộ tài liệu 3 app (anh bảo tốn token) — không dùng kết quả; soạn `PHAN-VIEC.md` gọn từ BRIEF mục 3.
 - **20/10/2026** — Web v0.4: thay hình tự vẽ bằng hình Pixel Agents (`pixel-agents-hq/pixel-agents`, MIT © 2026 Pablo De Lucca; nhân vật dựa trên Metro City của JIK-A-4) — chép 33 file hình vào `web/assets/pa/` (122 KB) + `LICENSE-pixel-agents.txt`; ghi nguồn dưới bản đồ. Sơ đồ `web/office-layout.json` đúng định dạng layout của Pixel Agents (sửa được bằng trình sửa của họ). Bộ vẽ + logic viết lại bằng JS thuần (đọc sơ đồ, tô màu sàn / tường, xếp lớp theo zY, tìm đường, ngồi / đi nghỉ sofa / cà phê / bảng trắng, thẻ tên, bảng thông tin, nút "giả lập đang làm việc"). 1 phòng: 4 nhân sự bàn chung giữa phòng (MKT, QC trên; Kế toán, Tester dưới), Mr.Mon bàn trên quay xuống, sau lưng bảng trắng. Đã chụp kiểm bằng Edge chạy ngầm ở 1300px (thường + giả lập) và 500px: hiển thị đúng, không tràn ngang. CHƯA kiểm điện thoại thật (Edge chạy ngầm không thu hẹp dưới 500px).
 - **20/10/2026** — Tìm dự án có sẵn: Pixel Agents (9.8k sao, MIT — chỉ theo dõi phiên Claude Code trên máy, không giao việc), claude-office (MIT, cần máy chủ Python, chỉ theo dõi máy), pixel-office (Boss chia việc + bảng việc nhưng dùng API key và KHÔNG có giấy phép → không chép). Không cái nào làm sẵn "giao việc trên web → agent chạy cloud bằng gói" → giữ logic tự làm, mượn hình.
 - **20/10/2026** — Lỗi đã gây: bản v0.3 em tự vẽ pixel bằng code (tốn thời gian / token) trước khi anh bảo mượn hình có sẵn → đã bỏ, thay bằng v0.4.
