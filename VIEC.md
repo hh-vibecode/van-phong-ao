@@ -14,7 +14,7 @@
 ## 2. ĐANG NỢ
 | # | Việc | Ghi chú |
 |---|---|---|
-| 1 | Viết kế hoạch chi tiết bản chạy thử (bảng `vp_viec`, luồng trạng thái, cách kích agent từng repo, đo usage theo key, ước tính chi phí / tháng) để anh duyệt | xem BRIEF.md mục 5–7. Đề xuất: web gọi Edge Function `vp-*` (không cần khoá trong trang), đăng nhập bằng mã của anh kiểm ở máy chủ |
+| 1 | Kế hoạch triển khai ĐÃ VIẾT: `KE-HOACH-TRIEN-KHAI.md` (20/10) — chờ anh chốt 5 điểm cuối file | xem BRIEF.md mục 5–7. Đề xuất: web gọi Edge Function `vp-*` (không cần khoá trong trang), đăng nhập bằng mã của anh kiểm ở máy chủ |
 | 2 | Nối web với dữ liệu thật (đăng nhập, bảng việc, chat) | sau khi anh duyệt kế hoạch + đăng ký tiền tố |
 
 ## 2b. PHỤ THUỘC CHÉO
