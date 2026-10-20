@@ -36,6 +36,7 @@
 - Hình văn phòng: MƯỢN nhân vật / đồ đạc / sàn / tường của dự án mở có sẵn, ghi nguồn trên trang; mình chỉ làm phần logic (anh, 20/10/2026:
   "mượn nhân vật bối cảnh của nó, mình làm về phần logic khác thôi", "dùng thì note trong info là dùng model gì"). Đang dùng Pixel Agents (MIT).
 - Văn phòng 1 phòng chung: 4 nhân sự ngồi bàn giữa phòng, Mr.Mon ngồi ghế đối diện (anh, 20/10/2026).
+- Tên nhân sự (anh, 20/10/2026): Masa = MKT/Sale, Quang Lê = QC CSKH (anh viết "QC Sale"), Katy = Kế toán, Tester = Tester.
 
 ## 4. NHẬT KÝ
 - **20/10/2026** — Web v0.4: thay hình tự vẽ bằng hình Pixel Agents (`pixel-agents-hq/pixel-agents`, MIT © 2026 Pablo De Lucca; nhân vật dựa trên Metro City của JIK-A-4) — chép 33 file hình vào `web/assets/pa/` (122 KB) + `LICENSE-pixel-agents.txt`; ghi nguồn dưới bản đồ. Sơ đồ `web/office-layout.json` đúng định dạng layout của Pixel Agents (sửa được bằng trình sửa của họ). Bộ vẽ + logic viết lại bằng JS thuần (đọc sơ đồ, tô màu sàn / tường, xếp lớp theo zY, tìm đường, ngồi / đi nghỉ sofa / cà phê / bảng trắng, thẻ tên, bảng thông tin, nút "giả lập đang làm việc"). 1 phòng: 4 nhân sự bàn chung giữa phòng (MKT, QC trên; Kế toán, Tester dưới), Mr.Mon bàn trên quay xuống, sau lưng bảng trắng. Đã chụp kiểm bằng Edge chạy ngầm ở 1300px (thường + giả lập) và 500px: hiển thị đúng, không tràn ngang. CHƯA kiểm điện thoại thật (Edge chạy ngầm không thu hẹp dưới 500px).
