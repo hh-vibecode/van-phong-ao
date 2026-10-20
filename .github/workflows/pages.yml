@@ -1,0 +1,37 @@
+# Đưa web văn phòng ảo (thư mục web/) lên GitHub Pages. Soát khoá trước — có khoá thì DỪNG, không đưa lên.
+# Chỉ đẩy thư mục web/, không đẩy BRIEF / VIEC / scripts. Monsieur Claude, 20/10/2026.
+name: pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  soat-khoa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Soát khoá (file hiện tại + toàn bộ lịch sử)
+        run: node scripts/soat-khoa.js --lich-su
+  deploy:
+    needs: soat-khoa
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.d.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web
+      - id: d
+        uses: actions/deploy-pages@v4

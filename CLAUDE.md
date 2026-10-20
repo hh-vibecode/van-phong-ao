@@ -22,6 +22,9 @@ Xong việc thì cập nhật `VIEC.md` ngay trong phiên. Anh đã quyết rồ
 - Supabase dùng chung `bcrpxfvvjsjpvbksqzls`: theo `mkt-sale-app/QUY-UOC-DUNG-CHUNG-SUPABASE.md`. Đăng ký tiền tố (đề xuất `vp_`) vào sổ đó
   TRƯỚC khi tạo bảng / hàm / lịch. Bảng mới bật RLS. KHÔNG đụng khoá legacy, JWT secret, `dang-nhap`, `la_quan_tri()`.
 
+- Web nằm ở `web/` (Pages đưa lên bằng workflow `pages`, CHỈ thư mục `web/`). Trước khi đẩy: `scripts/soat-khoa.js` phải "sạch" (hook pre-commit
+  trên máy đã tự chạy; máy mới thì tạo lại `.git/hooks/pre-commit`). Trang KHÔNG chứa khoá nào, kể cả anon / publishable — gọi máy chủ qua Edge Function `vp-*`.
+
 ## Cách làm việc (giống 3 app con)
 - Minh bạch: kể đủ lỗi đã gây, phần chưa kiểm, rủi ro. Tự làm, chỉ nhờ anh khi bị chặn thật.
 - Khoá / token / mật khẩu: không in, không dán chat, không commit, không đặt trong trang web.
